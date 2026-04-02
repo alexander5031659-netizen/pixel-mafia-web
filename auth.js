@@ -43,37 +43,30 @@ async function handleLogin(e) {
     btn.disabled = true;
 
     try {
-        // In production, this will call your API
-        // const response = await fetch('/api/auth/login', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify({ email, password })
-        // });
-        // const data = await response.json();
+        // Call real API
+        const response = await fetch('https://pixel-mafia-api.onrender.com/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
 
-        // Simulate API call for now
-        await new Promise(r => setTimeout(r, 1000));
+        const data = await response.json();
 
-        // Demo credentials for testing
-        if (email === 'demo@pixelmafia.com' && password === 'demo123') {
-            const mockUser = {
-                id: '1',
-                name: 'Demo User',
-                email: email,
-                tokens: 100,
-                plan: 'Pro'
-            };
+        if (data.ok) {
+            // Store auth data from API
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
 
-            // Store auth data
-            localStorage.setItem('token', 'mock-jwt-token');
-            localStorage.setItem('user', JSON.stringify(mockUser));
-
-            // Redirect to dashboard
-            const params = new URLSearchParams(window.location.search);
-            const redirect = params.get('redirect') || 'dashboard';
-            window.location.href = `${redirect}.html`;
+            // Redirect based on user type
+            if (data.user.isAdmin) {
+                window.location.href = 'admin.html';
+            } else {
+                const params = new URLSearchParams(window.location.search);
+                const redirect = params.get('redirect') || 'dashboard';
+                window.location.href = `${redirect}.html`;
+            }
         } else {
-            showError('Email o contraseña incorrectos');
+            showError(data.error || 'Email o contraseña incorrectos');
         }
     } catch (error) {
         showError('Error de conexión. Intenta de nuevo.');
