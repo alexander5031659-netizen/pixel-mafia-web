@@ -1,18 +1,22 @@
 // auth.js - Authentication JavaScript
-document.addEventListener('DOMContentLoaded', () => {
-    // Check if user is already logged in
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
+console.log('🔐 auth.js loaded');
 
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('📄 DOM loaded, initializing auth...');
+    
     // Handle login form
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
+        console.log('✅ Login form found');
         loginForm.addEventListener('submit', handleLogin);
+    } else {
+        console.log('❌ Login form NOT found');
     }
 
     // Handle register form
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
+        console.log('✅ Register form found');
         registerForm.addEventListener('submit', handleRegister);
     }
 
