@@ -245,6 +245,14 @@ function loadLogs() {
     container.scrollTop = container.scrollHeight;
 }
 
+// Close modal
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('show');
+    }
+}
+
 // Show add account modal
 function showAddAccountModal() {
     document.getElementById('addAccountModal').classList.add('show');
