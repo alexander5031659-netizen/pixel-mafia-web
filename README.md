@@ -1,8 +1,34 @@
 # Pixel Mafia - Plataforma Web
 
-Plataforma web completa para gestión de bots de IMVU. Landing page + Dashboard + Panel Admin.
+Plataforma web completa para gestión de bots de IMVU. Landing page + Dashboard + Panel Admin + API REST + MongoDB Atlas.
 
-## 📁 Estructura de Archivos
+## 🎉 Estado Actual del Proyecto
+
+| Componente | URL | Estado |
+|------------|-----|--------|
+| **Frontend (Vercel)** | https://pixel-mafia-web-k2tz.vercel.app/ | ✅ Online |
+| **API (Render)** | https://pixel-mafia-api.onrender.com/ | ✅ Connected to MongoDB |
+| **MongoDB Atlas** | cluster0.bh1pdnr.mongodb.net | ✅ Active |
+
+### ✅ Funcionalidades Implementadas
+
+- [x] Landing page con logo pixel art
+- [x] Sistema de registro/login con JWT
+- [x] Dashboard de cliente
+- [x] Panel de administración
+- [x] API REST con Express + MongoDB
+- [x] Autenticación completa (usuarios + admin)
+- [x] Conexión MongoDB Atlas
+- [x] Despliegue automático (GitHub → Vercel/Render)
+
+### � En Progreso / Pendiente
+
+- [ ] Integración PayPal para pagos
+- [ ] Conexión con bots reales (music/mod/ia)
+- [ ] Sistema de tokens funcional
+- [ ] Notificaciones email
+
+## �📁 Estructura de Archivos
 
 ```
 web/
@@ -23,7 +49,22 @@ web/
 └── vercel.json         # Configuración Vercel
 ```
 
-## 🚀 Despliegue en Vercel (GRATIS)
+## 🚀 URLs de Producción (Activas)
+
+- **Web:** https://pixel-mafia-web-k2tz.vercel.app/
+- **API:** https://pixel-mafia-api.onrender.com/
+- **API Health Check:** https://pixel-mafia-api.onrender.com/api/health
+
+## 🔑 Credenciales de Prueba
+
+### Usuario Administrador
+- **Email:** `admin@pixelmafia.com`
+- **Password:** `admin123`
+- **Acceso:** Panel admin completo
+
+### Usuario Normal (Registrarse en /register.html)
+- Cualquier email/password válido
+- Acceso: Dashboard cliente
 
 ### Opción 1: Vercel CLI
 
@@ -74,8 +115,8 @@ Crear `vercel.json` en carpeta `web/`:
 Editar `web/config.js`:
 
 ```javascript
-const API_URL = 'https://tu-api.render.com';  // URL de tu API en Render
-// const API_URL = 'http://localhost:3001'; // Para desarrollo local
+const API_URL = 'https://pixel-mafia-api.onrender.com'; // Production API ✅
+// const API_URL = 'http://localhost:3003'; // Desarrollo local
 ```
 
 ### 2. Endpoints disponibles

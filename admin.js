@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Setup navigation
     setupNavigation();
 
+    // Initialize add account form
+    setupAddAccountForm();
+
     // Load all data
     loadOverview();
     loadClients();
@@ -434,6 +437,3 @@ function addLog(type, message) {
     localStorage.setItem('systemLogs', JSON.stringify(logs.slice(-500)));
     loadLogs();
 }
-
-// Initialize add account form
-setupAddAccountForm();
