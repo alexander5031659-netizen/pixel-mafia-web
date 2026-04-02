@@ -1,6 +1,6 @@
 // config.js - API configuration
-const API_URL = 'https://tu-api.render.com'; // Cambiar cuando tengas la URL real
-// const API_URL = 'http://localhost:3000'; // Para desarrollo local
+const API_URL = 'https://pixel-mafia-api.onrender.com'; // Production API
+// const API_URL = 'https://tu-api.render.com'; // Cambiar cuando despliegues a producción
 
 const API_ENDPOINTS = {
     auth: {
