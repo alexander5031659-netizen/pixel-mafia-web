@@ -1,5 +1,7 @@
 // dashboard.js - Dashboard Logic
 
+let currentUser = null;
+
 // ── Auth Protection ──────────────────────────────────────────────────────────
 function checkAuth() {
     const user = localStorage.getItem('pm_user');
@@ -12,22 +14,64 @@ function checkAuth() {
 
 // ── Initialize Dashboard ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-    const user = checkAuth();
-    if (!user) return;
+    currentUser = checkAuth();
+    if (!currentUser) return;
 
-    loadUserInfo(user);
-    loadStats(user);
-    loadBots(user);
-    setupEventListeners(user);
+    loadUserInfo(currentUser);
+    loadStats(currentUser);
+    loadBots(currentUser);
+    setupTabs();
+    setupEventListeners(currentUser);
 });
+
+// ── Tab Navigation ───────────────────────────────────────────────────────────
+function setupTabs() {
+    const navItems = document.querySelectorAll('.nav-item[data-page]');
+    const pages = document.querySelectorAll('.page');
+
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetPage = item.getAttribute('data-page');
+
+            // Remove active from all nav items
+            navItems.forEach(n => n.classList.remove('active'));
+            item.classList.add('active');
+
+            // Hide all pages
+            pages.forEach(p => p.classList.remove('active'));
+
+            // Show target page
+            const page = document.getElementById(targetPage);
+            if (page) page.classList.add('active');
+
+            // Update header
+            updateHeader(targetPage);
+        });
+    });
+}
+
+function updateHeader(pageId) {
+    const title = document.getElementById('pageTitle');
+    const subtext = document.getElementById('pageSubtext');
+
+    const titles = {
+        'page-dashboard': ['Dashboard', 'Resumen de tu actividad'],
+        'page-bots': ['Mis Bots', 'Gestiona todos tus bots'],
+        'page-settings': ['Configuraci&oacute;n', 'Ajustes de tu cuenta']
+    };
+
+    if (titles[pageId]) {
+        title.textContent = titles[pageId][0];
+        subtext.textContent = titles[pageId][1];
+    }
+}
 
 // ── Load User Info ───────────────────────────────────────────────────────────
 function loadUserInfo(user) {
     const name = user.name || 'Usuario';
     const initial = name.charAt(0).toUpperCase();
     
-    document.getElementById('welcomeName').textContent = 'Hola, ' + name;
-    document.getElementById('welcomeSubtext').textContent = 'Gestiona tus bots de música desde aquí';
     document.getElementById('userAvatar').textContent = initial;
 }
 
@@ -54,9 +98,11 @@ function loadStats(user) {
 function loadBots(user) {
     const bots = JSON.parse(localStorage.getItem('pm_bots_' + user.id) || '[]');
     const emptyState = document.getElementById('emptyBots');
-    const botsList = document.getElementById('botsList');
+    const dashboardBots = document.getElementById('dashboardBots');
+    const allBotsList = document.getElementById('allBotsList');
     
-    botsList.innerHTML = '';
+    dashboardBots.innerHTML = '';
+    allBotsList.innerHTML = '';
     
     if (bots.length === 0) {
         emptyState.style.display = 'block';
@@ -65,9 +111,20 @@ function loadBots(user) {
     
     emptyState.style.display = 'none';
     
+    // Dashboard: show only active bots (max 2)
+    const activeBots = bots.filter(b => b.active).slice(0, 2);
+    activeBots.forEach((bot, i) => {
+        const realIndex = bots.indexOf(bot);
+        dashboardBots.appendChild(createBotCard(bot, realIndex, user.id));
+    });
+
+    if (activeBots.length === 0) {
+        emptyState.style.display = 'block';
+    }
+    
+    // All Bots page: show all bots
     bots.forEach((bot, index) => {
-        const card = createBotCard(bot, index, user.id);
-        botsList.appendChild(card);
+        allBotsList.appendChild(createBotCard(bot, index, user.id));
     });
 }
 
@@ -97,7 +154,7 @@ function createBotCard(bot, index, userId) {
             '<div class="now-playing">' +
                 '<div class="album-art"><i class="fas fa-music"></i></div>' +
                 '<div class="track-info">' +
-                    '<span class="track-name">' + (bot.active ? 'Reproduciendo música...' : 'Bot detenido') + '</span>' +
+                    '<span class="track-name">' + (bot.active ? 'Reproduciendo m&uacute;sica...' : 'Bot detenido') + '</span>' +
                     '<span class="track-artist">' + (bot.roomUrl ? extractRoomId(bot.roomUrl) : 'Sin sala configurada') + '</span>' +
                 '</div>' +
                 '<div class="track-time">' + (bot.active ? 'LIVE' : 'OFF') + '</div>' +
@@ -140,7 +197,7 @@ function toggleBot(userId, index) {
 
 // ── Delete Bot ───────────────────────────────────────────────────────────────
 function deleteBot(userId, index) {
-    if (!confirm('¿Estás seguro de eliminar este bot?')) return;
+    if (!confirm('¿Est&aacute;s seguro de eliminar este bot?')) return;
     
     const bots = JSON.parse(localStorage.getItem('pm_bots_' + userId) || '[]');
     bots.splice(index, 1);
@@ -159,17 +216,12 @@ function setupEventListeners(user) {
         window.location.href = 'login.html';
     });
     
-    // New Bot Modal
+    // New Bot Modal (multiple buttons)
     const modal = document.getElementById('botModal');
-    document.getElementById('newBotBtn').addEventListener('click', () => {
-        modal.classList.add('active');
-    });
-    document.getElementById('createFirstBot').addEventListener('click', () => {
-        modal.classList.add('active');
-    });
-    document.getElementById('modalClose').addEventListener('click', () => {
-        modal.classList.remove('active');
-    });
+    document.getElementById('newBotBtn').addEventListener('click', () => modal.classList.add('active'));
+    document.getElementById('newBotBtn2').addEventListener('click', () => modal.classList.add('active'));
+    document.getElementById('createFirstBot').addEventListener('click', () => modal.classList.add('active'));
+    document.getElementById('modalClose').addEventListener('click', () => modal.classList.remove('active'));
     modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.classList.remove('active');
     });
@@ -178,6 +230,28 @@ function setupEventListeners(user) {
     document.getElementById('botForm').addEventListener('submit', (e) => {
         e.preventDefault();
         createBot(user);
+    });
+
+    // Settings form
+    document.getElementById('settingsForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newName = document.getElementById('settingsName').value.trim();
+        if (newName) {
+            user.name = newName;
+            localStorage.setItem('pm_user', JSON.stringify(user));
+            loadUserInfo(user);
+            showNotification('Perfil actualizado', 'success');
+        }
+    });
+
+    // Delete account
+    document.getElementById('deleteAccountBtn').addEventListener('click', () => {
+        if (confirm('¿Estás seguro? Esta acci&oacute;n es irreversible.')) {
+            localStorage.removeItem('pm_user');
+            localStorage.removeItem('pm_token');
+            localStorage.removeItem('pm_bots_' + user.id);
+            window.location.href = 'login.html';
+        }
     });
 }
 
@@ -196,7 +270,7 @@ function createBot(user) {
     const bots = JSON.parse(localStorage.getItem('pm_bots_' + user.id) || '[]');
     
     if (user.plan === 'trial' && bots.length >= 1) {
-        showNotification('Tu plan de prueba solo incluye 1 bot. Actualiza para más.', 'error');
+        showNotification('Tu plan de prueba solo incluye 1 bot. Actualiza para m&aacute;s.', 'error');
         return;
     }
     

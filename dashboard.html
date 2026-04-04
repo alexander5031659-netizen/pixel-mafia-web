@@ -22,15 +22,15 @@
                 </div>
             </div>
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item active" data-page="dashboard">
+                <a href="#" class="nav-item active" data-page="page-dashboard">
                     <i class="fas fa-th-large"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="#" class="nav-item" data-page="bots">
+                <a href="#" class="nav-item" data-page="page-bots">
                     <i class="fas fa-robot"></i>
                     <span>Mis Bots</span>
                 </a>
-                <a href="#" class="nav-item" data-page="settings">
+                <a href="#" class="nav-item" data-page="page-settings">
                     <i class="fas fa-cog"></i>
                     <span>Configuraci&oacute;n</span>
                 </a>
@@ -46,8 +46,8 @@
         <main class="main-content">
             <header class="top-bar">
                 <div class="page-info">
-                    <h1 id="welcomeName">Dashboard</h1>
-                    <p id="welcomeSubtext">Cargando...</p>
+                    <h1 id="pageTitle">Dashboard</h1>
+                    <p id="pageSubtext">Bienvenido de nuevo</p>
                 </div>
                 <div class="top-actions">
                     <button class="icon-btn"><i class="fas fa-bell"></i></button>
@@ -55,55 +55,120 @@
                 </div>
             </header>
 
-            <section class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon blue"><i class="fas fa-music"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-label">Bots Activos</span>
-                        <span class="stat-value" id="statBots">0</span>
+            <!-- PÁGINA: Dashboard -->
+            <div id="page-dashboard" class="page active">
+                <section class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-music"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Bots Activos</span>
+                            <span class="stat-value" id="statBots">0</span>
+                        </div>
                     </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon purple"><i class="fas fa-headphones"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-label">Oyentes Hoy</span>
-                        <span class="stat-value" id="statListeners">0</span>
+                    <div class="stat-card">
+                        <div class="stat-icon purple"><i class="fas fa-headphones"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Oyentes Hoy</span>
+                            <span class="stat-value" id="statListeners">0</span>
+                        </div>
                     </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon green"><i class="fas fa-server"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-label">Uptime</span>
-                        <span class="stat-value" id="statUptime">--</span>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-server"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Uptime</span>
+                            <span class="stat-value" id="statUptime">--</span>
+                        </div>
                     </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon orange"><i class="fas fa-calendar-alt"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-label">D&iacute;as Restantes</span>
-                        <span class="stat-value" id="statDays">--</span>
+                    <div class="stat-card">
+                        <div class="stat-icon orange"><i class="fas fa-calendar-alt"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">D&iacute;as Restantes</span>
+                            <span class="stat-value" id="statDays">--</span>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <section class="active-bot-section">
-                <div class="section-header">
-                    <h2>Tus Bots</h2>
-                    <button class="btn-primary" id="newBotBtn"><i class="fas fa-plus"></i> Nuevo Bot</button>
-                </div>
+                <section class="active-bot-section">
+                    <div class="section-header">
+                        <h2>Bot Activo</h2>
+                        <button class="btn-primary" id="newBotBtn"><i class="fas fa-plus"></i> Nuevo Bot</button>
+                    </div>
+                    <div class="empty-state" id="emptyBots">
+                        <div class="empty-icon"><i class="fas fa-robot"></i></div>
+                        <h3>No tienes bots activos</h3>
+                        <p>Crea tu primer bot y empieza a poner m&uacute;sica en tu sala</p>
+                        <button class="btn-primary" id="createFirstBot"><i class="fas fa-plus"></i> Crear mi primer bot</button>
+                    </div>
+                    <div id="dashboardBots"></div>
+                </section>
+            </div>
 
-                <div class="empty-state" id="emptyBots">
-                    <div class="empty-icon"><i class="fas fa-robot"></i></div>
-                    <h3>No tienes bots activos</h3>
-                    <p>Crea tu primer bot y empieza a poner m&uacute;sica en tu sala de IMVU</p>
-                    <button class="btn-primary" id="createFirstBot"><i class="fas fa-plus"></i> Crear mi primer bot</button>
-                </div>
+            <!-- PÁGINA: Mis Bots -->
+            <div id="page-bots" class="page">
+                <section class="active-bot-section">
+                    <div class="section-header">
+                        <h2>Todos tus Bots</h2>
+                        <button class="btn-primary" id="newBotBtn2"><i class="fas fa-plus"></i> Nuevo Bot</button>
+                    </div>
+                    <div id="allBotsList"></div>
+                </section>
+            </div>
 
-                <div id="botsList"></div>
-            </section>
+            <!-- PÁGINA: Configuración -->
+            <div id="page-settings" class="page">
+                <section class="settings-section">
+                    <div class="settings-card">
+                        <h2><i class="fas fa-user"></i> Perfil</h2>
+                        <form id="settingsForm" class="settings-form">
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <input type="text" id="settingsName" placeholder="Tu nombre">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="settingsEmail" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>Contraseña Actual</label>
+                                <input type="password" placeholder="••••••••">
+                            </div>
+                            <div class="form-group">
+                                <label>Nueva Contraseña</label>
+                                <input type="password" placeholder="Dejar vacío para no cambiar">
+                            </div>
+                            <button type="submit" class="btn-submit">Guardar Cambios</button>
+                        </form>
+                    </div>
+
+                    <div class="settings-card">
+                        <h2><i class="fas fa-bell"></i> Notificaciones</h2>
+                        <div class="toggle-setting">
+                            <span>Notificaciones por email</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="toggle-setting">
+                            <span>Alertas de bot caído</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-card danger">
+                        <h2><i class="fas fa-exclamation-triangle"></i> Zona de Peligro</h2>
+                        <p>Eliminar tu cuenta es irreversible y borrará todos tus bots.</p>
+                        <button class="btn-danger" id="deleteAccountBtn">Eliminar Cuenta</button>
+                    </div>
+                </section>
+            </div>
         </main>
     </div>
 
+    <!-- Modal Nuevo Bot -->
     <div class="modal-overlay" id="botModal">
         <div class="modal">
             <div class="modal-header">
