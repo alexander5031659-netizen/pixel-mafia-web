@@ -5,224 +5,163 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pixel Mafia Music | Bot de Música para IMVU</title>
     <link rel="icon" type="image/png" href="logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Fondo animado -->
+    <div class="bg-grid"></div>
+
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="container">
-            <a href="index.html" class="nav-brand">
-                <img src="logo.png" alt="Pixel Mafia Music" style="height: 55px; width: auto;">
-            </a>
+        <div class="container nav-content">
+            <div class="nav-brand">
+                <span class="logo-icon">🎵</span> Pixel Mafia <span class="highlight">Music</span>
+            </div>
             <div class="nav-links">
                 <a href="#features">Características</a>
-                <a href="#precios">Precios</a>
-                <a href="#funciona">Cómo Funciona</a>
-                <a href="login.html" class="btn-nav">Entrar</a>
+                <a href="#pricing">Planes</a>
+                <a href="login.html" class="btn-nav">Dashboard</a>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>Bot de Música 24/7 para tu Sala de <span class="gradient-text">IMVU</span></h1>
-                <p class="hero-subtitle">Música continua desde YouTube. Tus usuarios piden canciones con !play y el bot las reproduce sin parar.</p>
-                <div class="hero-buttons">
-                    <a href="#precios" class="btn-primary">Ver Planes</a>
-                    <a href="#features" class="btn-secondary">Saber Más</a>
+    <header class="hero">
+        <div class="hero-glow"></div>
+        <div class="container hero-content">
+            <div class="badge-new">🚀 NUEVO SERVICIO</div>
+            <h1>Transforma tu Sala de <span class="gradient-text">IMVU</span> con Música 24/7</h1>
+            <p class="hero-subtitle">El bot de música más avanzado. Tus usuarios piden canciones con <code>!play</code> y el bot las reproduce al instante desde YouTube. Sin interrupciones, sin lag.</p>
+            
+            <div class="hero-btns">
+                <a href="#pricing" class="btn btn-primary glow-btn">
+                    <i class="fas fa-play"></i> Probar 3 Días Gratis
+                </a>
+                <a href="#features" class="btn btn-secondary">
+                    <i class="fas fa-info-circle"></i> Ver Características
+                </a>
+            </div>
+
+            <!-- Estadísticas en vivo -->
+            <div class="live-stats">
+                <div class="stat-item">
+                    <span class="stat-number" data-target="12">0</span>
+                    <span class="stat-label">Clientes Activos</span>
                 </div>
-                <div class="hero-stats">
-                    <div class="stat">
-                        <span class="stat-number">500+</span>
-                        <span class="stat-label">Salas Activas</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">50K+</span>
-                        <span class="stat-label">Canciones Reproductas</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">99.9%</span>
-                        <span class="stat-label">Uptime</span>
-                    </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="15">0</span>
+                    <span class="stat-label">Bots Conectados</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="99">0</span>%
+                    <span class="stat-label">Uptime</span>
                 </div>
             </div>
         </div>
-        <div class="hero-gradient"></div>
-    </section>
+    </header>
 
     <!-- Features Section -->
-    <section id="features" class="bots">
+    <section id="features" class="section">
         <div class="container">
-            <h2 class="section-title">¿Por qué <span class="gradient-text">Pixel Mafia?</span></h2>
-            <p class="section-subtitle">El bot de música más estable y fácil de usar para IMVU</p>
+            <h2 class="section-title">Tecnología de <span class="gradient-text">Vanguardia</span></h2>
+            <p class="section-subtitle">Diseñado para ofrecer la mejor experiencia musical en IMVU</p>
             
-            <div class="bots-grid">
-                <div class="bot-card">
-                    <div class="bot-icon">🎵</div>
-                    <h3>Música Continua</h3>
-                    <p class="bot-desc">Cola de reproducción automática. Las canciones se reproducen una tras otra sin interrupciones.</p>
-                    <ul class="bot-features">
-                        <li>✓ Búsqueda por nombre</li>
-                        <li>✓ Links de YouTube</li>
-                        <li>✓ Cola ilimitada</li>
-                    </ul>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="icon-box"><i class="fas fa-robot"></i></div>
+                    <h3>Automatización Total</h3>
+                    <p>El bot entra a tu sala, saluda y se queda activo 24/7. Tú solo configuras y olvidas.</p>
                 </div>
-
-                <div class="bot-card">
-                    <div class="bot-icon">🖥️</div>
-                    <h3>100% en la Nube</h3>
-                    <p class="bot-desc">No necesitas tener tu PC encendida. Nuestros servidores mantienen el bot activo 24/7.</p>
-                    <ul class="bot-features">
-                        <li>✓ Sin consumo de recursos</li>
-                        <li>✓ Siempre disponible</li>
-                        <li>✓ Reconexión automática</li>
-                    </ul>
+                <div class="feature-card">
+                    <div class="icon-box"><i class="fas fa-music"></i></div>
+                    <h3>Cola Inteligente</h3>
+                    <p>Sistema de cola avanzado. Los usuarios piden <code>!play</code> y el bot gestiona el orden automáticamente.</p>
                 </div>
-
-                <div class="bot-card">
-                    <div class="bot-icon">💬</div>
-                    <h3>Control por Chat</h3>
-                    <p class="bot-desc">Tus usuarios controlan la música directamente desde el chat de la sala con comandos simples.</p>
-                    <ul class="bot-features">
-                        <li>✓ !play - Buscar canción</li>
-                        <li>✓ !skip - Saltar canción</li>
-                        <li>✓ !stop - Detener radio</li>
-                    </ul>
+                <div class="feature-card">
+                    <div class="icon-box"><i class="fas fa-server"></i></div>
+                    <h3>Servidores Cloud</h3>
+                    <p>Alojado en la nube de alta velocidad. No necesitas tener tu PC encendida ni gastar tus datos.</p>
                 </div>
-
-                <div class="bot-card featured">
-                    <div class="badge">POPULAR</div>
-                    <div class="bot-icon">⚡</div>
-                    <h3>Panel de Control</h3>
-                    <p class="bot-desc">Gestiona tu bot desde un panel web. Inicia, detiene y configura tu sala fácilmente.</p>
-                    <ul class="bot-features">
-                        <li>✓ Dashboard intuitivo</li>
-                        <li>✓ Logs en tiempo real</li>
-                        <li>✓ Configuración fácil</li>
-                    </ul>
+                <div class="feature-card">
+                    <div class="icon-box"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Seguridad Premium</h3>
+                    <p>Sesiones encriptadas y protección contra caídas. Si el bot se desconecta, se reconecta solo.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Como Funciona -->
-    <section id="funciona" class="how-it-works">
-        <div class="container">
-            <h2 class="section-title">¿Cómo <span class="gradient-text">Funciona?</span></h2>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3>Regístrate</h3>
-                    <p>Crea tu cuenta en menos de 1 minuto</p>
-                </div>
-                <div class="step-arrow">→</div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>Elige tu Plan</h3>
-                    <p>GA para salas generales, AP para Access Pass</p>
-                </div>
-                <div class="step-arrow">→</div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Activa tu Bot</h3>
-                    <p>Pon la URL de tu sala y listo. Música en segundos</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Precios -->
-    <section id="precios" class="pricing">
+    <!-- Pricing Section -->
+    <section id="pricing" class="section bg-darker">
         <div class="container">
             <h2 class="section-title">Planes y <span class="gradient-text">Precios</span></h2>
-            <p class="section-subtitle">Elige el plan perfecto para tu sala</p>
+            <p class="section-subtitle">Empieza gratis y escala cuando quieras</p>
             
             <div class="pricing-grid">
-                <div class="pricing-card">
-                    <h3>Sala GA</h3>
-                    <div class="pricing-amount">General Audience</div>
-                    <div class="pricing-price">$15 USD/mes</div>
-                    <p class="pricing-desc">Para salas generales</p>
-                    <ul class="bot-features" style="margin: 20px 0; text-align: left;">
-                        <li>✓ Bot de Música 24/7</li>
-                        <li>✓ Cola automática</li>
-                        <li>✓ Panel de Control</li>
-                        <li>✓ Soporte Básico</li>
+                <!-- Plan Trial -->
+                <div class="pricing-card trial">
+                    <div class="card-header">
+                        <h3>Prueba Gratis</h3>
+                        <div class="price">$0</div>
+                        <p class="duration">Por 3 Días</p>
+                    </div>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check"></i> Bot de Música 24/7</li>
+                        <li><i class="fas fa-check"></i> Comandos básicos</li>
+                        <li><i class="fas fa-check"></i> Soporte por Discord</li>
+                        <li><i class="fas fa-bolt"></i> Activación Inmediata</li>
                     </ul>
-                    <button class="btn-pricing">Elegir Plan</button>
+                    <a href="register.html" class="btn btn-outline">Empezar Prueba</a>
                 </div>
+
+                <!-- Plan GA -->
+                <div class="pricing-card">
+                    <div class="card-header">
+                        <h3>Sala GA</h3>
+                        <div class="price">$15<span>/mes</span></div>
+                        <p class="duration">General Audience</p>
+                    </div>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check"></i> Todo lo del plan Trial</li>
+                        <li><i class="fas fa-check"></i> Cola ilimitada</li>
+                        <li><i class="fas fa-check"></i> Panel de Control</li>
+                        <li><i class="fas fa-check"></i> Soporte Prioritario</li>
+                    </ul>
+                    <a href="register.html" class="btn btn-primary">Elegir Plan</a>
+                </div>
+
+                <!-- Plan AP -->
                 <div class="pricing-card popular">
-                    <div class="badge">MEJOR VALOR</div>
-                    <h3>Sala AP</h3>
-                    <div class="pricing-amount">Access Pass</div>
-                    <div class="pricing-price">$25 USD/mes</div>
-                    <p class="pricing-desc">Para salas AP</p>
-                    <ul class="bot-features" style="margin: 20px 0; text-align: left;">
-                        <li>✓ Todo lo del plan GA</li>
-                        <li>✓ Prioridad en la cola</li>
-                        <li>✓ Soporte Premium</li>
-                        <li>✓ Personalización</li>
+                    <div class="badge-pop">MEJOR VALOR</div>
+                    <div class="card-header">
+                        <h3>Sala AP</h3>
+                        <div class="price">$25<span>/mes</span></div>
+                        <p class="duration">Access Pass</p>
+                    </div>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check"></i> Todo lo del plan GA</li>
+                        <li><i class="fas fa-check"></i> Personalización total</li>
+                        <li><i class="fas fa-check"></i> Estadísticas avanzadas</li>
+                        <li><i class="fas fa-crown"></i> Soporte VIP 24/7</li>
                     </ul>
-                    <button class="btn-pricing">Elegir Plan</button>
-                </div>
-                <div class="pricing-card">
-                    <h3>Prueba Gratis</h3>
-                    <div class="pricing-amount">7 Días</div>
-                    <div class="pricing-price">$0 USD</div>
-                    <p class="pricing-desc">Sin tarjeta de crédito</p>
-                    <ul class="bot-features" style="margin: 20px 0; text-align: left;">
-                        <li>✓ Bot de Música 24/7</li>
-                        <li>✓ Funciones básicas</li>
-                        <li>✓ Sin compromiso</li>
-                    </ul>
-                    <button class="btn-pricing">Probar Ahora</button>
+                    <a href="register.html" class="btn btn-primary glow-btn">Elegir Plan</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FAQ -->
-    <section id="faq" class="faq">
+    <!-- CTA Final -->
+    <section class="cta-section">
         <div class="container">
-            <h2 class="section-title">Preguntas <span class="gradient-text">Frecuentes</span></h2>
-            <div class="faq-grid">
-                <div class="faq-item">
-                    <h4>¿Necesito dejar mi PC encendida?</h4>
-                    <p>No. Nuestros bots corren en servidores 24/7. Tú solo configuras y olvídate.</p>
-                </div>
-                <div class="faq-item">
-                    <h4>¿Cómo piden música los usuarios?</h4>
-                    <p>Escriben !play nombre de la canción en el chat y el bot la busca y reproduce.</p>
-                </div>
-                <div class="faq-item">
-                    <h4>¿Qué pasa si el bot se desconecta?</h4>
-                    <p>Tiene reconexión automática. Si algo falla, vuelve a entrar solo.</p>
-                </div>
-                <div class="faq-item">
-                    <h4>¿Puedo cambiar de sala?</h4>
-                    <p>Sí, puedes mover tu bot a otra sala cuando quieras desde tu dashboard.</p>
-                </div>
-                <div class="faq-item">
-                    <h4>¿Qué métodos de pago aceptan?</h4>
-                    <p>PayPal automático, o transferencia Nequi/Bancolombia (activación manual).</p>
-                </div>
-                <div class="faq-item">
-                    <h4>¿Tienen garantía?</h4>
-                    <p>Sí, 7 días de garantía. Si no te gusta, devolvemos tu dinero.</p>
-                </div>
+            <div class="cta-box">
+                <h2>¿Listo para revolucionar tu sala?</h2>
+                <p>Únete hoy y obtén 3 días de servicio premium totalmente gratis.</p>
+                <a href="register.html" class="btn btn-primary btn-large">Crear Cuenta Gratis</a>
             </div>
-        </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta">
-        <div class="container">
-            <h2>¿Listo para poner música en tu sala?</h2>
-            <p>Únete a cientos de salas que ya usan Pixel Mafia Music Bot</p>
-            <a href="#precios" class="btn-primary btn-large">Comenzar Ahora</a>
         </div>
     </section>
 
@@ -232,12 +171,11 @@
             <div class="footer-content">
                 <div class="footer-brand">
                     <span class="footer-logo">🎵 Pixel Mafia Music</span>
-                    <p>Bot de música profesional para IMVU desde 2024</p>
+                    <p>El futuro de la música en IMVU.</p>
                 </div>
                 <div class="footer-links">
                     <a href="#">Términos</a>
                     <a href="#">Privacidad</a>
-                    <a href="#">Contacto</a>
                     <a href="#">Discord</a>
                 </div>
             </div>
