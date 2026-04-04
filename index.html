@@ -5,19 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pixel Mafia Music | Bot de Música para IMVU</title>
     <link rel="icon" type="image/png" href="logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Fondo animado -->
+    <!-- Efectos de fondo -->
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
     <div class="bg-grid"></div>
 
     <!-- Navbar -->
     <nav class="navbar">
         <div class="container nav-content">
             <div class="nav-brand">
-                <span class="logo-icon">🎵</span> Pixel Mafia <span class="highlight">Music</span>
+                <div class="brand-icon"><i class="fas fa-music"></i></div>
+                <span>Pixel Mafia <small>Music</small></span>
             </div>
             <div class="nav-links">
                 <a href="#features">Características</a>
@@ -29,11 +32,13 @@
 
     <!-- Hero Section -->
     <header class="hero">
-        <div class="hero-glow"></div>
         <div class="container hero-content">
-            <div class="badge-new">🚀 NUEVO SERVICIO</div>
+            <div class="hero-badge">
+                <span class="pulse-dot"></span>
+                NUEVO SERVICIO
+            </div>
             <h1>Transforma tu Sala de <span class="gradient-text">IMVU</span> con Música 24/7</h1>
-            <p class="hero-subtitle">El bot de música más avanzado. Tus usuarios piden canciones con <code>!play</code> y el bot las reproduce al instante desde YouTube. Sin interrupciones, sin lag.</p>
+            <p class="hero-subtitle">El bot de música más avanzado. Tus usuarios piden canciones con <code>!play</code> y el bot las reproduce al instante desde YouTube. Sin interrupciones.</p>
             
             <div class="hero-btns">
                 <a href="#pricing" class="btn btn-primary glow-btn">
@@ -67,29 +72,31 @@
     <!-- Features Section -->
     <section id="features" class="section">
         <div class="container">
-            <h2 class="section-title">Tecnología de <span class="gradient-text">Vanguardia</span></h2>
-            <p class="section-subtitle">Diseñado para ofrecer la mejor experiencia musical en IMVU</p>
+            <div class="section-header">
+                <h2>Tecnología de <span class="gradient-text">Vanguardia</span></h2>
+                <p>Diseñado para ofrecer la mejor experiencia musical en IMVU</p>
+            </div>
             
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="icon-box"><i class="fas fa-robot"></i></div>
+                    <div class="icon-box blue"><i class="fas fa-robot"></i></div>
                     <h3>Automatización Total</h3>
                     <p>El bot entra a tu sala, saluda y se queda activo 24/7. Tú solo configuras y olvidas.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="icon-box"><i class="fas fa-music"></i></div>
+                    <div class="icon-box purple"><i class="fas fa-music"></i></div>
                     <h3>Cola Inteligente</h3>
-                    <p>Sistema de cola avanzado. Los usuarios piden <code>!play</code> y el bot gestiona el orden automáticamente.</p>
+                    <p>Sistema de cola avanzado. Los usuarios piden <code>!play</code> y el bot gestiona el orden.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="icon-box"><i class="fas fa-server"></i></div>
+                    <div class="icon-box green"><i class="fas fa-server"></i></div>
                     <h3>Servidores Cloud</h3>
-                    <p>Alojado en la nube de alta velocidad. No necesitas tener tu PC encendida ni gastar tus datos.</p>
+                    <p>Alojado en la nube de alta velocidad. No necesitas tener tu PC encendida.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="icon-box"><i class="fas fa-shield-alt"></i></div>
+                    <div class="icon-box orange"><i class="fas fa-shield-alt"></i></div>
                     <h3>Seguridad Premium</h3>
-                    <p>Sesiones encriptadas y protección contra caídas. Si el bot se desconecta, se reconecta solo.</p>
+                    <p>Sesiones encriptadas y reconexión automática. Si el bot se desconecta, vuelve solo.</p>
                 </div>
             </div>
         </div>
@@ -98,8 +105,10 @@
     <!-- Pricing Section -->
     <section id="pricing" class="section bg-darker">
         <div class="container">
-            <h2 class="section-title">Planes y <span class="gradient-text">Precios</span></h2>
-            <p class="section-subtitle">Empieza gratis y escala cuando quieras</p>
+            <div class="section-header">
+                <h2>Planes y <span class="gradient-text">Precios</span></h2>
+                <p>Empieza gratis y escala cuando quieras</p>
+            </div>
             
             <div class="pricing-grid">
                 <!-- Plan Trial -->
@@ -170,8 +179,11 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <span class="footer-logo">🎵 Pixel Mafia Music</span>
-                    <p>El futuro de la música en IMVU.</p>
+                    <div class="brand-icon small"><i class="fas fa-music"></i></div>
+                    <div>
+                        <span class="footer-logo">Pixel Mafia Music</span>
+                        <p>El futuro de la música en IMVU.</p>
+                    </div>
                 </div>
                 <div class="footer-links">
                     <a href="#">Términos</a>
