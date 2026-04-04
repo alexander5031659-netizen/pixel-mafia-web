@@ -1,348 +1,245 @@
-// dashboard.js - Dashboard functionality
+// dashboard.js - Dashboard Logic
+
+// ── Auth Protection ──────────────────────────────────────────────────────────
+function checkAuth() {
+    const user = localStorage.getItem('pm_user');
+    if (!user) {
+        window.location.href = 'login.html';
+        return null;
+    }
+    return JSON.parse(user);
+}
+
+// ── Initialize Dashboard ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-    // Check authentication
-    if (!requireAuth()) return;
-
-    // Load user data
-    loadUserData();
-
-    // Setup navigation
-    setupNavigation();
-
-    // Load bots
-    loadBots();
-
-    // Setup modal handlers
-    setupModals();
-
-    // Update stats
-    updateStats();
-});
-
-// Load user data
-function loadUserData() {
-    const user = getCurrentUser();
-    if (user) {
-        document.getElementById('userName').textContent = user.name;
-        document.getElementById('tokenCount').textContent = user.tokens || 0;
-        document.getElementById('tokenBalance').textContent = user.tokens || 0;
-        document.getElementById('settingsName').value = user.name;
-        document.getElementById('settingsEmail').value = user.email;
-    }
-}
-
-// Setup navigation
-function setupNavigation() {
-    const navItems = document.querySelectorAll('.nav-item');
-    const sections = document.querySelectorAll('.content-section');
-
-    navItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            const sectionId = item.dataset.section;
-
-            // Update active nav
-            navItems.forEach(nav => nav.classList.remove('active'));
-            item.classList.add('active');
-
-            // Show section
-            sections.forEach(section => {
-                section.classList.remove('active');
-                if (section.id === sectionId) {
-                    section.classList.add('active');
-                }
-            });
-
-            // Update title
-            const titles = {
-                overview: 'Dashboard',
-                bots: 'Mis Bots',
-                tokens: 'Comprar Tokens',
-                history: 'Historial de Pagos',
-                settings: 'Configuración'
-            };
-            document.getElementById('page-title').textContent = titles[sectionId];
-        });
-    });
-}
-
-// Load bots from API (mock for now)
-async function loadBots() {
-    // In production: const response = await fetch('/api/bots');
-    // const bots = await response.json();
-
-    // Mock data
-    const bots = JSON.parse(localStorage.getItem('myBots') || '[]');
-
-    const botsList = document.getElementById('botsList');
-    const activeBots = document.getElementById('activeBots');
-
-    if (bots.length === 0) {
-        botsList.innerHTML = '<p class="empty-state">No tienes bots activos. Crea uno para comenzar.</p>';
-        activeBots.textContent = '0';
-        return;
-    }
-
-    activeBots.textContent = bots.length;
-
-    botsList.innerHTML = bots.map(bot => `
-        <div class="bot-item">
-            <div class="bot-info">
-                <h4>${bot.name}</h4>
-                <div class="bot-meta">
-                    <span>${getBotTypeLabel(bot.type)}</span>
-                    <span>•</span>
-                    <span>${bot.category}</span>
-                    <span>•</span>
-                    <span>${bot.roomUrl}</span>
-                </div>
-            </div>
-            <div class="bot-status">
-                <span class="status-dot ${bot.status === 'online' ? 'online' : 'offline'}"></span>
-                <span>${bot.status === 'online' ? 'Activo' : 'Detenido'}</span>
-            </div>
-            <div class="bot-actions">
-                <button class="btn-action" onclick="toggleBot('${bot.id}')">
-                    ${bot.status === 'online' ? 'Detener' : 'Iniciar'}
-                </button>
-                <button class="btn-action" onclick="deleteBot('${bot.id}')">Eliminar</button>
-            </div>
-        </div>
-    `).join('');
-}
-
-function getBotTypeLabel(type) {
-    const labels = {
-        music: '🎵 Bot Music',
-        mod: '🛡️ Bot Mod',
-        ia: '🤖 Bot IA',
-        alfa: '⚡ Bot ALFA'
-    };
-    return labels[type] || type;
-}
-
-// Show create bot modal
-function showCreateBotModal() {
-    document.getElementById('createBotModal').classList.add('show');
-}
-
-// Show buy tokens modal
-function showBuyTokensModal() {
-    // Navigate to tokens section
-    document.querySelector('[data-section="tokens"]').click();
-}
-
-// Close modal
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.remove('show');
-}
-
-// Setup modal handlers
-function setupModals() {
-    // Create bot form
-    const createBotForm = document.getElementById('createBotForm');
-    if (createBotForm) {
-        createBotForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const name = document.getElementById('botName').value;
-            const type = document.getElementById('botType').value;
-            const category = document.getElementById('botCategory').value;
-            const roomUrl = document.getElementById('botRoomUrl').value;
-
-            const user = getCurrentUser();
-            const tokensNeeded = category === 'GA' ? 0.5 : 0.83;
-            const tokensPerDay = type === 'alfa' ? tokensNeeded * 2 : type === 'music' ? tokensNeeded : tokensNeeded * 0.8;
-
-            if (user.tokens < tokensPerDay * 7) {
-                alert(`Necesitas al menos ${Math.ceil(tokensPerDay * 7)} tokens para crear este bot (1 semana de operación)`);
-                return;
-            }
-
-            const newBot = {
-                id: Date.now().toString(),
-                name,
-                type,
-                category,
-                roomUrl,
-                status: 'offline',
-                createdAt: new Date().toISOString()
-            };
-
-            const bots = JSON.parse(localStorage.getItem('myBots') || '[]');
-            bots.push(newBot);
-            localStorage.setItem('myBots', JSON.stringify(bots));
-
-            // Deduct tokens
-            user.tokens -= Math.ceil(tokensPerDay * 7);
-            localStorage.setItem('user', JSON.stringify(user));
-
-            closeModal('createBotModal');
-            createBotForm.reset();
-
-            loadBots();
-            loadUserData();
-            updateStats();
-
-            addActivity(`Bot "${name}" creado`);
-
-            alert('Bot creado exitosamente');
-        });
-    }
-
-    // Close modal on outside click
-    window.addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal')) {
-            e.target.classList.remove('show');
-        }
-    });
-}
-
-// Toggle bot status
-async function toggleBot(botId) {
-    const bots = JSON.parse(localStorage.getItem('myBots') || '[]');
-    const bot = bots.find(b => b.id === botId);
-
-    if (bot) {
-        bot.status = bot.status === 'online' ? 'offline' : 'online';
-        localStorage.setItem('myBots', JSON.stringify(bots));
-        loadBots();
-        addActivity(`Bot "${bot.name}" ${bot.status === 'online' ? 'iniciado' : 'detenido'}`);
-    }
-}
-
-// Delete bot
-async function deleteBot(botId) {
-    if (!confirm('¿Estás seguro de eliminar este bot?')) return;
-
-    const bots = JSON.parse(localStorage.getItem('myBots') || '[]');
-    const bot = bots.find(b => b.id === botId);
-    const filtered = bots.filter(b => b.id !== botId);
-
-    localStorage.setItem('myBots', JSON.stringify(filtered));
-    loadBots();
-    updateStats();
-
-    if (bot) {
-        addActivity(`Bot "${bot.name}" eliminado`);
-    }
-}
-
-// Buy tokens
-function buyTokens(amount, price) {
-    const method = confirm(`Comprar ${amount} tokens por $${price} USD\n\n¿Usar PayPal? (OK para PayPal, Cancelar para transferencia)`);
-
-    if (method) {
-        // PayPal flow
-        alert('Redirigiendo a PayPal...\n\n(En producción: integración con PayPal SDK)');
-        // Simulate successful payment
-        setTimeout(() => {
-            completeTokenPurchase(amount, price, 'PayPal');
-        }, 2000);
-    } else {
-        // Transfer flow
-        alert(`Para pagar por transferencia:\n\nNequi: 3001234567\nBancolombia: 1234567890\nTitular: Pixel Mafia\nValor: $${price} USD\n\nEnvía el comprobante a admin@pixelmafia.com`);
-    }
-}
-
-function completeTokenPurchase(amount, price, method) {
-    const user = getCurrentUser();
+    const user = checkAuth();
     if (!user) return;
 
-    user.tokens = (user.tokens || 0) + amount;
-    localStorage.setItem('user', JSON.stringify(user));
+    loadUserInfo(user);
+    loadStats(user);
+    loadBots(user);
+    setupEventListeners(user);
+});
 
-    // Add to history
-    const history = JSON.parse(localStorage.getItem('paymentHistory') || '[]');
-    history.unshift({
-        date: new Date().toISOString(),
-        description: `${amount} tokens (${method})`,
-        amount: `$${price} USD`,
-        status: 'Completado'
-    });
-    localStorage.setItem('paymentHistory', JSON.stringify(history));
-
-    loadUserData();
-    loadHistory();
-    addActivity(`Comprados ${amount} tokens`);
-
-    alert(`¡Compra exitosa! Ahora tienes ${user.tokens} tokens`);
+// ── Load User Info ───────────────────────────────────────────────────────────
+function loadUserInfo(user) {
+    const name = user.name || 'Usuario';
+    const initial = name.charAt(0).toUpperCase();
+    
+    document.getElementById('welcomeName').textContent = 'Hola, ' + name;
+    document.getElementById('welcomeSubtext').textContent = 'Gestiona tus bots de música desde aquí';
+    document.getElementById('userAvatar').textContent = initial;
 }
 
-// Load payment history
-function loadHistory() {
-    const history = JSON.parse(localStorage.getItem('paymentHistory') || '[]');
-    const tbody = document.getElementById('historyTableBody');
+// ── Load Stats ───────────────────────────────────────────────────────────────
+function loadStats(user) {
+    const bots = JSON.parse(localStorage.getItem('pm_bots_' + user.id) || '[]');
+    const activeBots = bots.filter(b => b.active).length;
+    
+    const trialEnd = new Date(user.trialEnds);
+    const now = new Date();
+    const daysLeft = Math.max(0, Math.ceil((trialEnd - now) / (1000 * 60 * 60 * 24)));
+    
+    document.getElementById('statBots').textContent = activeBots;
+    document.getElementById('statListeners').textContent = Math.floor(Math.random() * 30) + 5;
+    document.getElementById('statUptime').textContent = activeBots > 0 ? '99.9%' : '--';
+    document.getElementById('statDays').textContent = daysLeft > 0 ? daysLeft : '0';
+    
+    if (daysLeft <= 0) {
+        document.getElementById('statDays').style.color = '#ef4444';
+    }
+}
 
-    if (history.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty-cell">No hay pagos registrados</td></tr>';
+// ── Load Bots ────────────────────────────────────────────────────────────────
+function loadBots(user) {
+    const bots = JSON.parse(localStorage.getItem('pm_bots_' + user.id) || '[]');
+    const emptyState = document.getElementById('emptyBots');
+    const botsList = document.getElementById('botsList');
+    
+    botsList.innerHTML = '';
+    
+    if (bots.length === 0) {
+        emptyState.style.display = 'block';
         return;
     }
-
-    tbody.innerHTML = history.map(item => `
-        <tr>
-            <td>${new Date(item.date).toLocaleDateString()}</td>
-            <td>${item.description}</td>
-            <td>${item.amount}</td>
-            <td><span class="status-badge success">${item.status}</span></td>
-        </tr>
-    `).join('');
+    
+    emptyState.style.display = 'none';
+    
+    bots.forEach((bot, index) => {
+        const card = createBotCard(bot, index, user.id);
+        botsList.appendChild(card);
+    });
 }
 
-// Save settings
-function saveSettings() {
-    const name = document.getElementById('settingsName').value;
-    const user = getCurrentUser();
+// ── Create Bot Card ──────────────────────────────────────────────────────────
+function createBotCard(bot, index, userId) {
+    const card = document.createElement('div');
+    card.className = 'bot-card ' + (bot.active ? 'active' : '');
+    card.innerHTML = 
+        '<div class="bot-card-header">' +
+            '<div class="bot-info">' +
+                '<div class="status-dot ' + (bot.active ? 'online' : 'offline') + '"></div>' +
+                '<div class="bot-name">' +
+                    '<h3>' + bot.name + '</h3>' +
+                    '<span class="badge ' + bot.category.toLowerCase() + '">' + bot.category + '</span>' +
+                '</div>' +
+            '</div>' +
+            '<div class="bot-controls">' +
+                '<button class="btn-icon" onclick="toggleBot(\'' + userId + '\', ' + index + ')" title="' + (bot.active ? 'Detener' : 'Iniciar') + '">' +
+                    '<i class="fas fa-' + (bot.active ? 'pause' : 'play') + '"></i>' +
+                '</button>' +
+                '<button class="btn-icon" onclick="deleteBot(\'' + userId + '\', ' + index + ')" title="Eliminar">' +
+                    '<i class="fas fa-trash"></i>' +
+                '</button>' +
+            '</div>' +
+        '</div>' +
+        '<div class="bot-card-body">' +
+            '<div class="now-playing">' +
+                '<div class="album-art"><i class="fas fa-music"></i></div>' +
+                '<div class="track-info">' +
+                    '<span class="track-name">' + (bot.active ? 'Reproduciendo música...' : 'Bot detenido') + '</span>' +
+                    '<span class="track-artist">' + (bot.roomUrl ? extractRoomId(bot.roomUrl) : 'Sin sala configurada') + '</span>' +
+                '</div>' +
+                '<div class="track-time">' + (bot.active ? 'LIVE' : 'OFF') + '</div>' +
+            '</div>' +
+            '<div class="bot-meta">' +
+                '<div class="meta-item">' +
+                    '<i class="fas fa-door-open"></i>' +
+                    '<span>' + (bot.roomUrl ? extractRoomId(bot.roomUrl) : 'No configurada') + '</span>' +
+                '</div>' +
+                '<div class="meta-item">' +
+                    '<i class="fas fa-clock"></i>' +
+                    '<span>' + (bot.active ? 'Activo' : 'Inactivo') + '</span>' +
+                '</div>' +
+                '<div class="meta-item">' +
+                    '<i class="fas fa-user"></i>' +
+                    '<span>' + (bot.imvuUser || 'Sin cuenta') + '</span>' +
+                '</div>' +
+            '</div>' +
+        '</div>';
+    return card;
+}
 
-    if (user) {
-        user.name = name;
-        localStorage.setItem('user', JSON.stringify(user));
-        loadUserData();
-        alert('Configuración guardada');
+// ── Extract Room ID from URL ─────────────────────────────────────────────────
+function extractRoomId(url) {
+    if (!url) return 'No configurada';
+    const match = url.match(/room-([\d-]+)/);
+    return match ? 'Sala ' + match[1] : url;
+}
+
+// ── Toggle Bot (Start/Stop) ──────────────────────────────────────────────────
+function toggleBot(userId, index) {
+    const bots = JSON.parse(localStorage.getItem('pm_bots_' + userId) || '[]');
+    if (bots[index]) {
+        bots[index].active = !bots[index].active;
+        localStorage.setItem('pm_bots_' + userId, JSON.stringify(bots));
+        loadBots({ id: userId });
+        loadStats({ id: userId });
     }
 }
 
-// Add activity
-function addActivity(message) {
-    const activities = JSON.parse(localStorage.getItem('activities') || '[]');
-    activities.unshift({
-        message,
-        time: new Date().toISOString()
-    });
-    localStorage.setItem('activities', JSON.stringify(activities.slice(0, 20)));
-    loadActivities();
+// ── Delete Bot ───────────────────────────────────────────────────────────────
+function deleteBot(userId, index) {
+    if (!confirm('¿Estás seguro de eliminar este bot?')) return;
+    
+    const bots = JSON.parse(localStorage.getItem('pm_bots_' + userId) || '[]');
+    bots.splice(index, 1);
+    localStorage.setItem('pm_bots_' + userId, JSON.stringify(bots));
+    loadBots({ id: userId });
+    loadStats({ id: userId });
 }
 
-// Load activities
-function loadActivities() {
-    const activities = JSON.parse(localStorage.getItem('activities') || '[]');
-    const list = document.getElementById('activityList');
+// ── Setup Event Listeners ────────────────────────────────────────────────────
+function setupEventListeners(user) {
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('pm_user');
+        localStorage.removeItem('pm_token');
+        window.location.href = 'login.html';
+    });
+    
+    // New Bot Modal
+    const modal = document.getElementById('botModal');
+    document.getElementById('newBotBtn').addEventListener('click', () => {
+        modal.classList.add('active');
+    });
+    document.getElementById('createFirstBot').addEventListener('click', () => {
+        modal.classList.add('active');
+    });
+    document.getElementById('modalClose').addEventListener('click', () => {
+        modal.classList.remove('active');
+    });
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('active');
+    });
+    
+    // Create Bot Form
+    document.getElementById('botForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        createBot(user);
+    });
+}
 
-    if (activities.length === 0) {
-        list.innerHTML = '<p class="empty-state">No hay actividad reciente</p>';
+// ── Create Bot ───────────────────────────────────────────────────────────────
+function createBot(user) {
+    const name = document.getElementById('botName').value.trim();
+    const roomUrl = document.getElementById('botRoomUrl').value.trim();
+    const category = document.getElementById('botCategory').value;
+    const imvuUser = document.getElementById('botImvuUser').value.trim();
+    
+    if (!name || !roomUrl) {
+        showNotification('Completa todos los campos obligatorios', 'error');
         return;
     }
-
-    list.innerHTML = activities.map(act => `
-        <div class="activity-item">
-            <span>${act.message}</span>
-            <span class="activity-time">${new Date(act.time).toLocaleString()}</span>
-        </div>
-    `).join('');
+    
+    const bots = JSON.parse(localStorage.getItem('pm_bots_' + user.id) || '[]');
+    
+    if (user.plan === 'trial' && bots.length >= 1) {
+        showNotification('Tu plan de prueba solo incluye 1 bot. Actualiza para más.', 'error');
+        return;
+    }
+    
+    const newBot = {
+        id: Date.now().toString(),
+        name,
+        roomUrl,
+        category,
+        imvuUser,
+        active: false,
+        createdAt: new Date().toISOString()
+    };
+    
+    bots.push(newBot);
+    localStorage.setItem('pm_bots_' + user.id, JSON.stringify(bots));
+    
+    document.getElementById('botModal').classList.remove('active');
+    document.getElementById('botForm').reset();
+    
+    loadBots(user);
+    loadStats(user);
+    showNotification('Bot "' + name + '" creado exitosamente', 'success');
 }
 
-// Update stats
-function updateStats() {
-    const user = getCurrentUser();
-    if (user) {
-        const tokens = user.tokens || 0;
-        const tokensPerDay = 1; // Average consumption
-        const daysRemaining = Math.floor(tokens / tokensPerDay);
-
-        document.getElementById('daysRemaining').textContent = daysRemaining;
-        document.getElementById('usersServed').textContent = Math.floor(Math.random() * 1000) + 100;
-    }
-
-    loadActivities();
-    loadHistory();
+// ── Show Notification ────────────────────────────────────────────────────────
+function showNotification(message, type) {
+    const existing = document.querySelector('.dash-notification');
+    if (existing) existing.remove();
+    
+    const notification = document.createElement('div');
+    notification.className = 'dash-notification ' + (type === 'success' ? 'success' : 'error');
+    notification.innerHTML = '<i class="fas fa-' + (type === 'success' ? 'check-circle' : 'exclamation-circle') + '"></i><span>' + message + '</span>';
+    
+    notification.style.cssText = 'position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:12px;font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;z-index:1000;animation:slideIn 0.3s ease;' +
+        (type === 'success' 
+            ? 'background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:#10b981;' 
+            : 'background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#ef4444;');
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transition = 'opacity 0.3s';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
 }

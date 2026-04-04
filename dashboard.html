@@ -11,7 +11,6 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar Izquierda -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
@@ -22,7 +21,6 @@
                     </div>
                 </div>
             </div>
-
             <nav class="sidebar-nav">
                 <a href="#" class="nav-item active" data-page="dashboard">
                     <i class="fas fa-th-large"></i>
@@ -32,126 +30,118 @@
                     <i class="fas fa-robot"></i>
                     <span>Mis Bots</span>
                 </a>
-                <a href="#" class="nav-item" data-page="stats">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Estadísticas</span>
-                </a>
                 <a href="#" class="nav-item" data-page="settings">
                     <i class="fas fa-cog"></i>
-                    <span>Configuración</span>
+                    <span>Configuraci&oacute;n</span>
                 </a>
             </nav>
-
             <div class="sidebar-footer">
-                <a href="index.html" class="nav-item logout">
+                <a href="#" class="nav-item logout" id="logoutBtn">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span>Cerrar Sesión</span>
+                    <span>Cerrar Sesi&oacute;n</span>
                 </a>
             </div>
         </aside>
 
-        <!-- Contenido Principal -->
         <main class="main-content">
-            <!-- Header Superior -->
             <header class="top-bar">
                 <div class="page-info">
-                    <h1>Dashboard</h1>
-                    <p>Bienvenido de nuevo</p>
+                    <h1 id="welcomeName">Dashboard</h1>
+                    <p id="welcomeSubtext">Cargando...</p>
                 </div>
                 <div class="top-actions">
                     <button class="icon-btn"><i class="fas fa-bell"></i></button>
-                    <div class="user-avatar">U</div>
+                    <div class="user-avatar" id="userAvatar">U</div>
                 </div>
             </header>
 
-            <!-- Estadísticas -->
             <section class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-icon blue">
-                        <i class="fas fa-music"></i>
-                    </div>
+                    <div class="stat-icon blue"><i class="fas fa-music"></i></div>
                     <div class="stat-info">
                         <span class="stat-label">Bots Activos</span>
-                        <span class="stat-value">1</span>
+                        <span class="stat-value" id="statBots">0</span>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon purple">
-                        <i class="fas fa-headphones"></i>
-                    </div>
+                    <div class="stat-icon purple"><i class="fas fa-headphones"></i></div>
                     <div class="stat-info">
                         <span class="stat-label">Oyentes Hoy</span>
-                        <span class="stat-value">24</span>
+                        <span class="stat-value" id="statListeners">0</span>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon green">
-                        <i class="fas fa-server"></i>
-                    </div>
+                    <div class="stat-icon green"><i class="fas fa-server"></i></div>
                     <div class="stat-info">
                         <span class="stat-label">Uptime</span>
-                        <span class="stat-value">99.9%</span>
+                        <span class="stat-value" id="statUptime">--</span>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon orange">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
+                    <div class="stat-icon orange"><i class="fas fa-calendar-alt"></i></div>
                     <div class="stat-info">
-                        <span class="stat-label">Días Restantes</span>
-                        <span class="stat-value">3</span>
+                        <span class="stat-label">D&iacute;as Restantes</span>
+                        <span class="stat-value" id="statDays">--</span>
                     </div>
                 </div>
             </section>
 
-            <!-- Bot Activo -->
             <section class="active-bot-section">
                 <div class="section-header">
-                    <h2>Bot Activo</h2>
-                    <button class="btn-primary"><i class="fas fa-plus"></i> Nuevo Bot</button>
+                    <h2>Tus Bots</h2>
+                    <button class="btn-primary" id="newBotBtn"><i class="fas fa-plus"></i> Nuevo Bot</button>
                 </div>
 
-                <div class="bot-card active">
-                    <div class="bot-card-header">
-                        <div class="bot-info">
-                            <div class="status-dot online"></div>
-                            <div class="bot-name">
-                                <h3>DJ Luna</h3>
-                                <span class="badge ga">GA</span>
-                            </div>
-                        </div>
-                        <div class="bot-controls">
-                            <button class="btn-icon"><i class="fas fa-cog"></i></button>
-                            <button class="btn-stop">Detener</button>
-                        </div>
-                    </div>
-                    <div class="bot-card-body">
-                        <div class="now-playing">
-                            <div class="album-art"><i class="fas fa-music"></i></div>
-                            <div class="track-info">
-                                <span class="track-name">Hades66 - Yo Quiero Más</span>
-                                <span class="track-artist">Reproduciendo ahora</span>
-                            </div>
-                            <div class="track-time">02:34</div>
-                        </div>
-                        <div class="bot-meta">
-                            <div class="meta-item">
-                                <i class="fas fa-room"></i>
-                                <span>Room 381685932</span>
-                            </div>
-                            <div class="meta-item">
-                                <i class="fas fa-clock"></i>
-                                <span>Activo hace 2h 34m</span>
-                            </div>
-                            <div class="meta-item">
-                                <i class="fas fa-list"></i>
-                                <span>3 canciones en cola</span>
-                            </div>
-                        </div>
-                    </div>
+                <div class="empty-state" id="emptyBots">
+                    <div class="empty-icon"><i class="fas fa-robot"></i></div>
+                    <h3>No tienes bots activos</h3>
+                    <p>Crea tu primer bot y empieza a poner m&uacute;sica en tu sala de IMVU</p>
+                    <button class="btn-primary" id="createFirstBot"><i class="fas fa-plus"></i> Crear mi primer bot</button>
                 </div>
+
+                <div id="botsList"></div>
             </section>
         </main>
     </div>
+
+    <div class="modal-overlay" id="botModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Crear Nuevo Bot</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <form id="botForm" class="modal-form">
+                <div class="form-group">
+                    <label>Nombre del Bot</label>
+                    <input type="text" id="botName" required placeholder="Ej: DJ Luna">
+                </div>
+                <div class="form-group">
+                    <label>URL de la Sala</label>
+                    <input type="url" id="botRoomUrl" required placeholder="https://go.imvu.com/chat/room-XXXXXX">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Categor&iacute;a</label>
+                        <select id="botCategory" required>
+                            <option value="GA">GA (General)</option>
+                            <option value="AP">AP (Access Pass)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Usuario IMVU</label>
+                        <input type="text" id="botImvuUser" placeholder="Cuenta del bot">
+                    </div>
+                </div>
+                <div class="form-hint">
+                    <i class="fas fa-info-circle"></i> Tu prueba gratuita de 3 d&iacute;as incluye 1 bot GA.
+                </div>
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-rocket"></i> Crear Bot
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
 </body>
 </html>
