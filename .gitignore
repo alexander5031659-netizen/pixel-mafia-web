@@ -1,0 +1,28 @@
+# Dependencias
+node_modules/
+
+# Archivos de entorno y secretos (CRÍTICO)
+.env
+.env.local
+.env.*.local
+
+# Datos sensibles y sesiones de usuarios (NO SUBIR)
+instances/
+cuentas.json
+data/
+logs/
+*.log
+
+# Archivos de configuración de IA (tienen API Keys)
+bots/ia/agentes.json
+
+# Archivos temporales y de sistema
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+nul
+
+# Carpetas de build
+dist/
+build/

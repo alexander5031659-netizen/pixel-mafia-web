@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Mafia - Music Bot</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>Pixel Mafia</h1>
+                <span class="version">Music Bot Service</span>
+            </div>
+            <nav class="nav">
+                <a href="#" class="nav-link active" data-page="dashboard">Dashboard</a>
+                <a href="#" class="nav-link" data-page="instancias">Mis Bots</a>
+                <a href="#" class="nav-link" data-page="config">Configuración</a>
+                <a href="#" class="nav-link" data-page="logs">Logs</a>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <div class="page active" id="page-dashboard">
+                <header class="header">
+                    <h2>Dashboard</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-danger" id="stopAllBtn">Detener Todo</button>
+                    </div>
+                </header>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📻</div>
+                        <div class="stat-info">
+                            <h3>Bots Activos</h3>
+                            <span class="stat-status" id="active-bots-count">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔄</div>
+                        <div class="stat-info">
+                            <h3>Keep-Alive</h3>
+                            <span class="stat-status" id="status-keep">Inactivo</span>
+                        </div>
+                        <button class="btn btn-start" id="start-keep">Iniciar</button>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎵</div>
+                        <div class="stat-info">
+                            <h3>Servidor Radio</h3>
+                            <span class="stat-status">Conectado</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Actividad Reciente</h3>
+                    <div class="logs-preview" id="logsPreview"></div>
+                </div>
+            </div>
+
+            <div class="page" id="page-instancias">
+                <header class="header">
+                    <h2>Mis Bots de Música</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="addInstanciaBtn">+ Nuevo Bot</button>
+                    </div>
+                </header>
+
+                <div class="instancias-table-container">
+                    <table class="instancias-table">
+                        <thead>
+                            <tr>
+                                <th>Estado</th>
+                                <th>Nombre</th>
+                                <th>ID</th>
+                                <th>Sala</th>
+                                <th>Categoría</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="instanciasBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="page" id="page-config">
+                <header class="header"><h2>Configuración Global</h2></header>
+
+                <div class="config-section">
+                    <h3>Credenciales por Defecto</h3>
+                    <p class="config-hint">Estas se usarán si no especificas otras al crear un bot.</p>
+                    <div class="form-group">
+                        <label>Usuario IMVU:</label>
+                        <input type="text" id="cfg-imvu-user" placeholder="Tu usuario de IMVU">
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña IMVU:</label>
+                        <input type="password" id="cfg-imvu-pass" placeholder="Tu contraseña">
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h3>Servidor de Radio</h3>
+                    <div class="form-group">
+                        <label>URL del servidor:</label>
+                        <input type="text" id="cfg-radio-url" value="https://pixel-mafia-radio.onrender.com" placeholder="https://...">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="saveConfigBtn">Guardar Configuración</button>
+            </div>
+
+            <div class="page" id="page-logs">
+                <header class="header">
+                    <h2>Logs del Sistema</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" id="clearLogsBtn">Limpiar</button>
+                    </div>
+                </header>
+                <div class="logs-container" id="logsContainer"></div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modalInstancia">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nuevo Bot de Música</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nombre del Bot:</label>
+                    <input type="text" id="inst-nombre" placeholder="ej: DJ Luna, Radio Bot, etc.">
+                </div>
+                <div class="form-group">
+                    <label>URL de la Sala:</label>
+                    <input type="text" id="inst-sala" placeholder="https://go.imvu.com/chat/room-XXXXXX">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Categoría:</label>
+                        <select id="inst-categoria">
+                            <option value="GA">GA (General)</option>
+                            <option value="AP">AP (Access Pass)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ID (Auto):</label>
+                        <input type="text" id="inst-id" placeholder="Se genera automático" disabled>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Usuario IMVU (Opcional):</label>
+                    <input type="text" id="inst-usuario" placeholder="Usa el global si está vacío">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña IMVU (Opcional):</label>
+                    <input type="password" id="inst-password" placeholder="Usa la global si está vacía">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modalCancel">Cancelar</button>
+                <button class="btn btn-primary" id="modalSave">Crear Bot</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

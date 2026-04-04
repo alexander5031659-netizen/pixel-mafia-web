@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: pixel-mafia-radio
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: pip install yt-dlp && npm install
+    startCommand: node servidor.js
+    healthCheckPath: /salas
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
