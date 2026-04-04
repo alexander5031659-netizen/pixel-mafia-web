@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="sidebar-logo"><img src="logo.png" alt="Pixel Mafia" style="height: 50px; width: auto;"></a>
+            <span class="admin-badge">ADMIN</span>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#overview" class="nav-item active" data-section="overview">
+                <span class="nav-icon">📊</span>
+                <span>Resumen</span>
+            </a>
+            <a href="#clients" class="nav-item" data-section="clients">
+                <span class="nav-icon">👥</span>
+                <span>Clientes</span>
+            </a>
+            <a href="#bots" class="nav-item" data-section="bots">
+                <span class="nav-icon">🤖</span>
+                <span>Bots</span>
+            </a>
+            <a href="#cuentas" class="nav-item" data-section="cuentas">
+                <span class="nav-icon">🔑</span>
+                <span>Cuentas</span>
+            </a>
+            <a href="#pagos" class="nav-item" data-section="pagos">
+                <span class="nav-icon">💰</span>
+                <span>Pagos</span>
+            </a>
+            <a href="#logs" class="nav-item" data-section="logs">
+                <span class="nav-icon">📜</span>
+                <span>Logs</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="btn-logout" onclick="logout()">
+                <span>🚪</span>
+                <span>Cerrar Sesión</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <h1 id="page-title">Panel de Administración</h1>
+            <div class="header-actions">
+                <div class="user-menu">
+                    <span>Administrador</span>
+                    <div class="user-avatar">👑</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Sections -->
+        <div class="content-wrapper">
+            <!-- Overview Section -->
+            <section id="overview" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="totalClients">0</span>
+                            <span class="stat-label">Clientes</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🤖</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="totalBots">0</span>
+                            <span class="stat-label">Bots Activos</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="monthlyRevenue">$0</span>
+                            <span class="stat-label">Ingresos Mes</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔑</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="availableAccounts">0</span>
+                            <span class="stat-label">Cuentas Libres</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-grid">
+                    <div class="admin-card">
+                        <h3>⚠️ Alertas</h3>
+                        <div id="alertsList">
+                            <p class="empty-state">No hay alertas</p>
+                        </div>
+                    </div>
+                    <div class="admin-card">
+                        <h3>📈 Estadísticas Rápidas</h3>
+                        <div class="quick-stats">
+                            <div class="quick-stat">
+                                <span class="label">Bots GA:</span>
+                                <span class="value" id="botsGA">0</span>
+                            </div>
+                            <div class="quick-stat">
+                                <span class="label">Bots AP:</span>
+                                <span class="value" id="botsAP">0</span>
+                            </div>
+                            <div class="quick-stat">
+                                <span class="label">Pagos Pendientes:</span>
+                                <span class="value" id="pendingPayments">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Clients Section -->
+            <section id="clients" class="content-section">
+                <div class="section-header">
+                    <h2>Clientes</h2>
+                    <div class="search-box">
+                        <input type="text" id="searchClients" placeholder="Buscar cliente...">
+                        <button onclick="searchClients()">🔍</button>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Tokens</th>
+                                <th>Bots</th>
+                                <th>Registro</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientsTableBody">
+                            <tr><td colspan="6" class="empty-cell">Cargando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Bots Section -->
+            <section id="bots" class="content-section">
+                <div class="section-header">
+                    <h2>Todos los Bots</h2>
+                    <button class="btn-primary" onclick="refreshBots()">🔄 Actualizar</button>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Tipo</th>
+                                <th>Sala</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="botsTableBody">
+                            <tr><td colspan="6" class="empty-cell">Cargando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Cuentas Section -->
+            <section id="cuentas" class="content-section">
+                <div class="section-header">
+                    <h2>Pool de Cuentas</h2>
+                    <button class="btn-primary" onclick="showAddAccountModal()">+ Agregar Cuenta</button>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Usuario</th>
+                                <th>Categoría</th>
+                                <th>Estado</th>
+                                <th>Asignada a</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cuentasTableBody">
+                            <tr><td colspan="6" class="empty-cell">Cargando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Pagos Section -->
+            <section id="pagos" class="content-section">
+                <div class="section-header">
+                    <h2>Pagos</h2>
+                    <div class="filter-buttons">
+                        <button class="btn-filter active" onclick="filterPayments('all')">Todos</button>
+                        <button class="btn-filter" onclick="filterPayments('pending')">Pendientes</button>
+                        <button class="btn-filter" onclick="filterPayments('completed')">Completados</button>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Descripción</th>
+                                <th>Monto</th>
+                                <th>Método</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pagosTableBody">
+                            <tr><td colspan="7" class="empty-cell">Cargando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Logs Section -->
+            <section id="logs" class="content-section">
+                <div class="section-header">
+                    <h2>Logs del Sistema</h2>
+                    <button class="btn-primary" onclick="clearLogs()">🗑️ Limpiar</button>
+                </div>
+                <div class="logs-container" id="logsContainer">
+                    <p class="empty-state">No hay logs</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Add Account Modal -->
+    <div id="addAccountModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Agregar Cuenta Bot</h3>
+                <button class="modal-close" onclick="closeModal('addAccountModal')">&times;</button>
+            </div>
+            <form id="addAccountForm" class="modal-form">
+                <div class="form-group">
+                    <label>Usuario IMVU</label>
+                    <input type="text" id="accountUser" required placeholder="nombre_bot">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="accountPass" required placeholder="••••••••">
+                </div>
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select id="accountCategory" required>
+                        <option value="GA">General Audience (GA)</option>
+                        <option value="AP">Access Pass (AP)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-modal">Agregar Cuenta</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

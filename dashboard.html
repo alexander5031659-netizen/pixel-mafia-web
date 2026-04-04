@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="sidebar-logo"><img src="logo.png" alt="Pixel Mafia" style="height: 50px; width: auto;"></a>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#overview" class="nav-item active" data-section="overview">
+                <span class="nav-icon">📊</span>
+                <span>Resumen</span>
+            </a>
+            <a href="#bots" class="nav-item" data-section="bots">
+                <span class="nav-icon">🤖</span>
+                <span>Mis Bots</span>
+            </a>
+            <a href="#tokens" class="nav-item" data-section="tokens">
+                <span class="nav-icon">🪙</span>
+                <span>Tokens</span>
+            </a>
+            <a href="#history" class="nav-item" data-section="history">
+                <span class="nav-icon">📜</span>
+                <span>Historial</span>
+            </a>
+            <a href="#settings" class="nav-item" data-section="settings">
+                <span class="nav-icon">⚙️</span>
+                <span>Configuración</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="btn-logout" onclick="logout()">
+                <span>🚪</span>
+                <span>Cerrar Sesión</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <h1 id="page-title">Dashboard</h1>
+            <div class="header-actions">
+                <div class="token-display">
+                    <span class="token-icon">🪙</span>
+                    <span class="token-count" id="tokenCount">100</span>
+                    <span>tokens</span>
+                </div>
+                <div class="user-menu">
+                    <span id="userName">Demo User</span>
+                    <div class="user-avatar">👤</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Sections -->
+        <div class="content-wrapper">
+            <!-- Overview Section -->
+            <section id="overview" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🤖</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="activeBots">0</span>
+                            <span class="stat-label">Bots Activos</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🪙</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="tokenBalance">100</span>
+                            <span class="stat-label">Tokens</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="daysRemaining">30</span>
+                            <span class="stat-label">Días Restantes</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="usersServed">0</span>
+                            <span class="stat-label">Usuarios Atendidos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h3>Acciones Rápidas</h3>
+                    <div class="action-buttons">
+                        <button class="action-btn primary" onclick="showCreateBotModal()">
+                            <span>➕</span>
+                            <span>Crear Bot</span>
+                        </button>
+                        <button class="action-btn" onclick="showBuyTokensModal()">
+                            <span>🪙</span>
+                            <span>Comprar Tokens</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="recent-activity">
+                    <h3>Actividad Reciente</h3>
+                    <div class="activity-list" id="activityList">
+                        <p class="empty-state">No hay actividad reciente</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bots Section -->
+            <section id="bots" class="content-section">
+                <div class="section-header">
+                    <h2>Mis Bots</h2>
+                    <button class="btn-primary" onclick="showCreateBotModal()">+ Nuevo Bot</button>
+                </div>
+                <div class="bots-list" id="botsList">
+                    <p class="empty-state">No tienes bots activos. Crea uno para comenzar.</p>
+                </div>
+            </section>
+
+            <!-- Tokens Section -->
+            <section id="tokens" class="content-section">
+                <div class="tokens-header">
+                    <h2>Comprar Tokens</h2>
+                    <p>1 token = 1 día de bot activo</p>
+                </div>
+                <div class="token-packages">
+                    <div class="token-card">
+                        <h3>Starter</h3>
+                        <div class="token-amount">30 tokens</div>
+                        <div class="token-price">$10 USD</div>
+                        <button class="btn-buy" onclick="buyTokens(30, 10)">Comprar</button>
+                    </div>
+                    <div class="token-card popular">
+                        <div class="badge">MEJOR VALOR</div>
+                        <h3>Pro</h3>
+                        <div class="token-amount">100 tokens</div>
+                        <div class="token-price">$25 USD</div>
+                        <p class="token-bonus">+20 tokens gratis</p>
+                        <button class="btn-buy" onclick="buyTokens(100, 25)">Comprar</button>
+                    </div>
+                    <div class="token-card">
+                        <h3>Elite</h3>
+                        <div class="token-amount">365 tokens</div>
+                        <div class="token-price">$80 USD</div>
+                        <button class="btn-buy" onclick="buyTokens(365, 80)">Comprar</button>
+                    </div>
+                </div>
+
+                <div class="payment-methods">
+                    <h3>Métodos de Pago</h3>
+                    <div class="payment-options">
+                        <div class="payment-option">
+                            <span class="payment-icon">💳</span>
+                            <span>PayPal (Automático)</span>
+                        </div>
+                        <div class="payment-option">
+                            <span class="payment-icon">📱</span>
+                            <span>Nequi (Manual)</span>
+                        </div>
+                        <div class="payment-option">
+                            <span class="payment-icon">🏦</span>
+                            <span>Bancolombia (Manual)</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Section -->
+            <section id="history" class="content-section">
+                <h2>Historial de Pagos</h2>
+                <div class="history-table-wrapper">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Descripción</th>
+                                <th>Monto</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <tr>
+                                <td colspan="4" class="empty-cell">No hay pagos registrados</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="content-section">
+                <h2>Configuración</h2>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" id="settingsName" value="Demo User">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="settingsEmail" value="demo@pixelmafia.com" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña Actual</label>
+                        <input type="password" placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label>Nueva Contraseña</label>
+                        <input type="password" placeholder="Dejar en blanco para no cambiar">
+                    </div>
+                    <button class="btn-save" onclick="saveSettings()">Guardar Cambios</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Create Bot Modal -->
+    <div id="createBotModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Crear Nuevo Bot</h3>
+                <button class="modal-close" onclick="closeModal('createBotModal')">&times;</button>
+            </div>
+            <form id="createBotForm" class="modal-form">
+                <div class="form-group">
+                    <label>Nombre del Bot</label>
+                    <input type="text" id="botName" required placeholder="Ej: DJ Luna">
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Bot</label>
+                    <select id="botType" required>
+                        <option value="">Seleccionar...</option>
+                        <option value="music">🎵 Bot Music</option>
+                        <option value="mod">🛡️ Bot Mod</option>
+                        <option value="ia">🤖 Bot IA</option>
+                        <option value="alfa">⚡ Bot ALFA</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select id="botCategory" required>
+                        <option value="">Seleccionar...</option>
+                        <option value="GA">General Audience (GA)</option>
+                        <option value="AP">Access Pass (AP)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>URL de la Sala IMVU</label>
+                    <input type="url" id="botRoomUrl" required placeholder="https://go.imvu.com/chat/room-XXXXXXX">
+                </div>
+                <div class="form-hint">
+                    💡 Costo diario: GA $0.50/day, AP $0.83/day (según tipo de bot)
+                </div>
+                <button type="submit" class="btn-modal">Crear Bot</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>
