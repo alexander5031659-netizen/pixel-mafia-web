@@ -45,18 +45,25 @@ if (!BOT_ROOM) {
     process.exit(1);
 }
 
+// Detectar modo de radio (Render = default, o Local para !play)
+const RADIO_MODO = process.env.RADIO_MODO || 'RENDER';
+const RADIO_URL_BASE = process.env.RADIO_URL || 'https://pixel-mafia-radio.onrender.com';
+
 // Construir URL de radio para esta sala
-const RADIO_URL_SALA = `${process.env.RADIO_URL}/stream/${SALA_ID}`;
+const RADIO_URL_SALA = `${RADIO_URL_BASE}/stream/${SALA_ID}`;
 
 console.log(`🎵 ${BOT_NAME} [${BOT_ID}] iniciando...`);
 console.log(`🔗 Sala URL: ${BOT_ROOM}`);
 console.log(`🏠 Sala ID: ${SALA_ID}`);
 console.log(`🖥️ Headless: ${HEADLESS}`);
 console.log(`🔧 Modo: ${NODE_ENV}`);
-console.log(`📻 Radio Server: ${process.env.RADIO_URL}`);
+console.log(`📻 Radio Server: ${RADIO_URL_BASE}`);
+console.log(`🎯 Radio Modo: ${RADIO_MODO === 'LOCAL' ? '🏠 LOCAL (YouTube !play activo)' : '☁️ RENDER (Lofi 24/7)'}`);
 console.log(`\n╔══════════════════════════════════════════════════════════╗`);
 console.log(`║  📻 URL DE RADIO PARA IMVU                               ║`);
 console.log(`║  ${RADIO_URL_SALA.padEnd(54)}  ║`);
+console.log(`║                                                          ║`);
+console.log(`║  ${RADIO_MODO === 'LOCAL' ? '✅ !play disponible (PC activa)' : '🚫 !play solo en modo LOCAL'.padEnd(54)}  ║`);
 console.log(`║                                                          ║`);
 console.log(`║  💡 Copia esta URL y pégsala en:                         ║`);
 console.log(`║     Configuración de Sala → Room Music → Audio URL       ║`);
@@ -784,8 +791,14 @@ async function verificarYEntrarSala(page, roomUrl) {
                 return mensajes;
             }, BOT_NAME.toLowerCase());
             
-            // Procesar mensajes encontrados
+            // Procesar mensajes encontrados (solo los que NO empiezan con !)
+            // Los comandos con ! ya son procesados por onMsg en tiempo real
             for (const msg of mensajesNuevos) {
+                // Ignorar comandos (ya los procesa onMsg)
+                if (msg.texto.trim().startsWith('!')) {
+                    continue;
+                }
+                
                 // Crear ID único incluyendo timestamp
                 const msgId = msg.nombre + ':' + msg.texto;
                 
@@ -797,13 +810,8 @@ async function verificarYEntrarSala(page, roomUrl) {
                         ultimosMensajes = new Set(entries.slice(-50));
                     }
                     
-                    console.log(`🎵 [POLLING] COMANDO: ${msg.nombre}: ${msg.texto}`);
-                    try {
-                        encolar(msg.texto.trim(), msg.nombre);
-                        console.log(`✅ [POLLING] Encolado: ${msg.texto.trim()}`);
-                    } catch (err) {
-                        console.log(`❌ [POLLING] Error encolando: ${err.message}`);
-                    }
+                    // Solo procesar mensajes que no son comandos
+                    console.log(`🎵 [POLLING] Mensaje: ${msg.nombre}: ${msg.texto.slice(0, 50)}`);
                 }
             }
         } catch (e) {
