@@ -14,27 +14,24 @@ async function manejarComando(msg, nombre, enviar, contexto = {}) {
 
     // ── Comando de ayuda ──
     if (msg === "!help" || msg === "!ayuda") {
-        return enviar("📻 MODO ACTUAL: Radio Lofi 24/7\n🚫 !play temporalmente deshabilitado (YouTube bloquea servidores)\n✅ La radio de fondo funciona automáticamente\n📻 Comandos: !stop | !skip | !queue | !np | !clear");
+        return enviar("🎵 COMANDOS: !play <canción> | !stop | !skip | !queue | !np | !clear\n🎧 Usamos Spotify para !play (YouTube está bloqueado en la nube)");
     }
 
     // ── Música ──
     if (msg.startsWith("!play ")) {
-        // Temporalmente deshabilitado - YouTube bloquea IPs de servidores cloud
-        return enviar("🚫 El comando !play está temporalmente deshabilitado\n📻 La radio Lofi 24/7 funciona automáticamente\n💡 Copia la URL del stream en Room Music de IMVU");
-        /*
         const query = msg.slice(6).trim();
         if (!query) return enviar(`${n} pon el nombre de la canción`);
 
+        // Ya no restringimos a YouTube - usamos Spotify ahora
         if (query.startsWith('http://') || query.startsWith('https://')) {
-            const esYouTube = query.includes('youtube.com') || query.includes('youtu.be');
-            if (!esYouTube) return enviar("❌ Solo se permiten links de YouTube");
+            return enviar("❌ Por favor escribe el nombre de la canción, no pegues links\n💡 Ejemplo: !play Bad Bunny Tití Me Preguntó");
         }
 
-        await enviar(`🔍 Buscando: ${query}`);
+        await enviar(`🔍 Buscando en Spotify: ${query}`);
 
         try {
             const cancion = await reproducirCancion(query, salaId);
-            if (!cancion) return enviar("❌ No encontré esa canción");
+            if (!cancion) return enviar("❌ No encontré esa canción en Spotify");
 
             const duracion = `${Math.floor(cancion.duracion / 60)}:${(cancion.duracion % 60).toString().padStart(2, '0')}`;
             const radioUrl = cancion.radioUrl;
@@ -54,9 +51,8 @@ async function manejarComando(msg, nombre, enviar, contexto = {}) {
             }
         } catch (e) {
             console.log("Error en !play:", e.message);
-            return enviar("❌ Error con la música");
+            return enviar("❌ Error al buscar la canción");
         }
-        */
     }
 
     if (msg === "!stop") {
