@@ -21,8 +21,6 @@ async function manejarComando(msg, nombre, enviar, contexto = {}) {
     if (msg.startsWith("!play ")) {
         // Temporalmente deshabilitado - YouTube bloquea IPs de servidores cloud
         return enviar("🚫 El comando !play está temporalmente deshabilitado\n📻 La radio Lofi 24/7 funciona automáticamente\n💡 Copia la URL del stream en Room Music de IMVU");
-        
-        // Código original comentado - reactivar cuando se encuentre solución a bloqueos
         /*
         const query = msg.slice(6).trim();
         if (!query) return enviar(`${n} pon el nombre de la canción`);
