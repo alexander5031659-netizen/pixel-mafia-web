@@ -3,10 +3,6 @@ require("dotenv").config();
 
 const RADIO_URL = process.env.RADIO_URL || "http://localhost:5000";
 
-// Cache para evitar mensajes duplicados (global)
-const mensajesProcesados = new Set();
-const MENSAJES_MAX = 50;
-
 // Map de URLs de radio enviadas por sala
 const urlRadioEnviadaPorSala = new Map();
 
@@ -15,26 +11,6 @@ async function manejarComando(msg, nombre, enviar, contexto = {}) {
     if (!msg) return;
     const n = nombre || "tu";
     const salaId = contexto.salaId || 'sala1';
-    
-    // Generar ID único para este mensaje
-    const msgId = `${salaId}:${nombre}:${msg}:${Date.now()}`;
-    const msgShortId = `${salaId}:${nombre}:${msg}`;
-    
-    // Verificar si ya procesamos este mensaje recientemente
-    if (mensajesProcesados.has(msgShortId)) {
-        console.log(`⚠️ Mensaje duplicado ignorado: ${msgShortId}`);
-        return;
-    }
-    
-    // Marcar como procesado
-    mensajesProcesados.add(msgShortId);
-    
-    // Limpiar cache si es muy grande
-    if (mensajesProcesados.size > MENSAJES_MAX) {
-        const entries = Array.from(mensajesProcesados);
-        mensajesProcesados.clear();
-        entries.slice(-25).forEach(e => mensajesProcesados.add(e));
-    }
     
     // Obtener estado de URL para esta sala
     let urlRadioEnviada = urlRadioEnviadaPorSala.get(salaId) || false;

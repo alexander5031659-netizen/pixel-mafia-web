@@ -785,13 +785,19 @@ async function verificarYEntrarSala(page, roomUrl) {
                         // Solo agregar si es comando válido y tiene nombre
                         if (nombre && mensaje && mensaje.trim().startsWith('!') && mensaje.length < 200) {
                             // Limpiar nombre
-                            nombre = nombre.replace(/[🎵✅🔍❌⚡📥📊⏳]/g, '').trim();
-                            // Limpiar mensaje
-                            mensaje = mensaje.replace(/[🎵✅🔍❌⚡📥📊⏳]/g, '').trim();
+                            nombre = nombre.replace(/[🎵✅🔍❌⚡📥📊⏳🔄💡>>]/g, '').trim();
+                            // Limpiar mensaje  
+                            mensaje = mensaje.replace(/[🎵✅🔍❌⚡📥📊⏳🔄💡>>]/g, '').trim();
                             
-                            // Ignorar si parece ser del bot
+                            // Ignorar si parece ser del bot (mensajes propios)
                             if (nombre.toLowerCase().includes(botNameLower)) return;
+                            if (nombre.includes('Bot') || nombre.includes('bot')) return;
                             if (mensaje.includes('activo y listo')) return;
+                            if (mensaje.includes('URL de radio')) return;
+                            if (mensaje.includes('Buscando en Spotify')) return;
+                            
+                            // Ignorar mensajes que parecen logs del bot (empiezan con >>)
+                            if (textoEl.includes('>>') || textoEl.includes('📥') || textoEl.includes('📊')) return;
                             
                             mensajes.push({
                                 nombre: nombre,
