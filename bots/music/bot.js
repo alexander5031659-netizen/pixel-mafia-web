@@ -530,7 +530,21 @@ async function verificarYEntrarSala(page, roomUrl) {
 
     const cola = [];
     let trabajando = false;
+    const comandosRecientes = new Set(); // Cache para deduplicar comandos
+    
     function encolar(msg, nombre) { 
+        const cmdId = `${nombre}:${msg}`;
+        
+        // Verificar si este comando ya fue encolado recientemente (últimos 3 segundos)
+        if (comandosRecientes.has(cmdId)) {
+            console.log(`⚠️ Comando duplicado ignorado: ${cmdId}`);
+            return;
+        }
+        
+        // Marcar como reciente
+        comandosRecientes.add(cmdId);
+        setTimeout(() => comandosRecientes.delete(cmdId), 3000); // Limpiar después de 3s
+        
         console.log(`📥 Encolando: ${nombre}: ${msg}`);
         cola.push({ msg, nombre }); 
         console.log(`📊 Cola ahora tiene ${cola.length} items, trabajando=${trabajando}`);
@@ -791,27 +805,37 @@ async function verificarYEntrarSala(page, roomUrl) {
                 return mensajes;
             }, BOT_NAME.toLowerCase());
             
-            // Procesar mensajes encontrados (solo los que NO empiezan con !)
-            // Los comandos con ! ya son procesados por onMsg en tiempo real
+            // Procesar mensajes encontrados
+            // NOTA: Los comandos con ! también se procesan aquí como respaldo
+            // porque onMsg a veces no detecta todos los mensajes
             for (const msg of mensajesNuevos) {
-                // Ignorar comandos (ya los procesa onMsg)
-                if (msg.texto.trim().startsWith('!')) {
-                    continue;
+                const textoTrim = msg.texto.trim();
+                
+                // Solo procesar comandos que empiezan con !
+                if (!textoTrim.startsWith('!')) {
+                    continue; // Ignorar mensajes normales
                 }
                 
-                // Crear ID único incluyendo timestamp
-                const msgId = msg.nombre + ':' + msg.texto;
+                // Crear ID único con timestamp para deduplicación
+                // Usamos el timestamp del mensaje + nombre + texto corto
+                const msgId = msg.nombre + ':' + textoTrim.slice(0, 30) + ':' + Math.floor(msg.timestamp / 2000);
                 
                 if (!ultimosMensajes.has(msgId)) {
                     ultimosMensajes.add(msgId);
                     // Limpiar cache si es muy grande
                     if (ultimosMensajes.size > 100) {
                         const entries = Array.from(ultimosMensajes);
-                        ultimosMensajes = new Set(entries.slice(-50));
+                        ultimosMensajes.clear();
+                        entries.slice(-50).forEach(e => ultimosMensajes.add(e));
                     }
                     
-                    // Solo procesar mensajes que no son comandos
-                    console.log(`🎵 [POLLING] Mensaje: ${msg.nombre}: ${msg.texto.slice(0, 50)}`);
+                    console.log(`🎵 [POLLING] COMANDO: ${msg.nombre}: ${textoTrim}`);
+                    try {
+                        encolar(textoTrim, msg.nombre);
+                        console.log(`✅ [POLLING] Encolado: ${textoTrim}`);
+                    } catch (err) {
+                        console.log(`❌ [POLLING] Error encolando: ${err.message}`);
+                    }
                 }
             }
         } catch (e) {
