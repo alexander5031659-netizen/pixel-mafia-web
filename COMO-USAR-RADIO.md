@@ -62,27 +62,29 @@ Cuando el bot entre a la sala, verás en los logs:
 
 ## 🎮 Comandos del Bot
 
+> ⚠️ **NOTA IMPORTANTE:** Debido a bloqueos de YouTube en servidores cloud, el comando `!play` está temporalmente deshabilitado. La radio **Lofi 24/7** funciona automáticamente sin necesidad de comandos.
+
 Una vez configurado, cualquier persona en la sala puede usar:
 
-| Comando | Descripción |
-|---------|-------------|
-| `!play <canción>` | Agrega una canción a la cola |
-| `!play <youtube-url>` | Usa URL directa de YouTube |
-| `!stop` | Detiene la música |
-| `!skip` | Salta a la siguiente canción |
-| `!queue` | Muestra la cola actual |
-| `!np` | Muestra qué está sonando |
-| `!clear` | Limpia la cola |
-| `!help` | Muestra ayuda |
+| Comando | Descripción | Estado |
+|---------|-------------|--------|
+| `!play <canción>` | Agrega una canción a la cola | 🚫 Deshabilitado |
+| `!stop` | Detiene la música | ✅ Funciona |
+| `!skip` | Cambia de stream de radio | ✅ Funciona |
+| `!queue` | Muestra información del stream | ✅ Funciona |
+| `!np` | Muestra qué está sonando | ✅ Funciona |
+| `!clear` | Reinicia el stream | ✅ Funciona |
+| `!help` | Muestra ayuda | ✅ Funciona |
 
 **Ejemplos:**
 ```
-!play bad bunny diles
-!play https://youtube.com/watch?v=dQw4w9WgXcQ
-!play vvs1
-!skip
-!queue
+!skip        # Cambiar a otro stream de lofi
+!queue       # Ver información actual
+!help        # Ver comandos disponibles
 ```
+
+**¿Por qué no funciona !play?**
+YouTube detecta que el servidor está en la nube (Render) y bloquea todas las peticiones. Estamos buscando alternativas.
 
 ---
 

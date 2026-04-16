@@ -14,11 +14,16 @@ async function manejarComando(msg, nombre, enviar, contexto = {}) {
 
     // ── Comando de ayuda ──
     if (msg === "!help" || msg === "!ayuda") {
-        return enviar("🎵 COMANDOS: !play <canción> | !stop | !skip | !queue | !np | !clear");
+        return enviar("📻 MODO ACTUAL: Radio Lofi 24/7\n🚫 !play temporalmente deshabilitado (YouTube bloquea servidores)\n✅ La radio de fondo funciona automáticamente\n📻 Comandos: !stop | !skip | !queue | !np | !clear");
     }
 
     // ── Música ──
     if (msg.startsWith("!play ")) {
+        // Temporalmente deshabilitado - YouTube bloquea IPs de servidores cloud
+        return enviar("🚫 El comando !play está temporalmente deshabilitado\n📻 La radio Lofi 24/7 funciona automáticamente\n💡 Copia la URL del stream en Room Music de IMVU");
+        
+        // Código original comentado - reactivar cuando se encuentre solución a bloqueos
+        /*
         const query = msg.slice(6).trim();
         if (!query) return enviar(`${n} pon el nombre de la canción`);
 
@@ -53,6 +58,7 @@ async function manejarComando(msg, nombre, enviar, contexto = {}) {
             console.log("Error en !play:", e.message);
             return enviar("❌ Error con la música");
         }
+        */
     }
 
     if (msg === "!stop") {
