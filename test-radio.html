@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 Test Radio Server - Pixel Mafia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
+        }
+        .server-config {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        .server-config input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        .search-box {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+        .search-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .search-input input {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+        }
+        .search-input input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #533483 0%, #7c3aed 100%);
+        }
+        .results {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            min-height: 100px;
+        }
+        .song-card {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .song-info h3 {
+            color: #e94560;
+            margin-bottom: 5px;
+        }
+        .song-info p {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .status.success {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+        }
+        .status.error {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+        .status.loading {
+            background: rgba(241, 196, 15, 0.2);
+            color: #f1c40f;
+        }
+        .queue {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 15px;
+        }
+        .queue h2 {
+            margin-bottom: 15px;
+            color: #e94560;
+        }
+        .queue-item {
+            padding: 10px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .audio-player {
+            width: 100%;
+            margin-top: 20px;
+        }
+        audio {
+            width: 100%;
+            border-radius: 12px;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .log {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .timestamp {
+            color: #e94560;
+        }
+        .hidden {
+            display: none;
+        }
+        .sala-config {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .sala-config input {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Test Radio Server</h1>
+        
+        <div class="server-config">
+            <label>🌐 URL del Servidor de Radio:</label>
+            <input type="text" id="serverUrl" value="https://pixel-mafia-radio.onrender.com" placeholder="https://tu-servidor.com">
+            <div class="sala-config">
+                <input type="text" id="salaId" value="demo" placeholder="ID de Sala (ej: demo, sala-123)">
+                <button class="btn btn-secondary" onclick="checkHealth()">💓 Health Check</button>
+            </div>
+        </div>
+
+        <div id="status" class="status hidden"></div>
+
+        <div class="search-box">
+            <h2 style="margin-bottom: 15px;">🔍 Buscar Canción</h2>
+            <div class="search-input">
+                <input type="text" id="searchQuery" placeholder="Nombre de canción o URL de YouTube..." onkeypress="if(event.key==='Enter')searchSong()">
+                <button class="btn" id="searchBtn" onclick="searchSong()">🔍 Buscar</button>
+            </div>
+            <div class="controls">
+                <button class="btn" onclick="startStream()">▶️ Reproducir Stream</button>
+                <button class="btn btn-secondary" onclick="skipSong()">⏭️ Skip</button>
+                <button class="btn btn-secondary" onclick="stopRadio()">⏹️ Stop</button>
+                <button class="btn btn-secondary" onclick="clearQueue()">🗑️ Clear Queue</button>
+                <button class="btn btn-secondary" onclick="refreshQueue()">🔄 Refresh</button>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <p style="text-align: center; color: rgba(255,255,255,0.5);">Los resultados aparecerán aquí...</p>
+        </div>
+
+        <div class="queue" id="queueSection">
+            <h2>📋 Cola Actual</h2>
+            <div id="queueList">
+                <p style="color: rgba(255,255,255,0.5);">Cola vacía</p>
+            </div>
+        </div>
+
+        <div class="audio-player hidden" id="playerSection">
+            <h3>🔊 Stream de Radio</h3>
+            <audio id="audioPlayer" controls autoplay>
+                <source src="" type="audio/mpeg">
+                Tu navegador no soporta audio streaming.
+            </audio>
+        </div>
+
+        <div class="log" id="log">
+            <div class="log-entry"><span class="timestamp">[Inicio]</span> Test Radio cargado</div>
+        </div>
+    </div>
+
+    <script>
+        const serverUrl = document.getElementById('serverUrl');
+        const salaId = document.getElementById('salaId');
+        const statusDiv = document.getElementById('status');
+        const resultsDiv = document.getElementById('results');
+        const queueList = document.getElementById('queueList');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const playerSection = document.getElementById('playerSection');
+        const log = document.getElementById('log');
+
+        function addLog(message) {
+            const now = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span class="timestamp">[${now}]</span> ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function showStatus(message, type) {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.classList.remove('hidden');
+            addLog(`${type.toUpperCase()}: ${message}`);
+        }
+
+        function hideStatus() {
+            statusDiv.classList.add('hidden');
+        }
+
+        async function checkHealth() {
+            showStatus('Verificando servidor...', 'loading');
+            try {
+                const response = await fetch(`${serverUrl.value}/health`);
+                const data = await response.json();
+                showStatus(`✅ Servidor OK - ${JSON.stringify(data)}`, 'success');
+            } catch (error) {
+                showStatus(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function searchSong() {
+            const query = document.getElementById('searchQuery').value.trim();
+            if (!query) {
+                showStatus('Ingresa una canción para buscar', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('searchBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Buscando...';
+            showStatus(`Buscando: "${query}"...`, 'loading');
+
+            try {
+                addLog(`Buscando: ${query}`);
+                const url = `${serverUrl.value}/play?q=${encodeURIComponent(query)}&sala=${salaId.value}`;
+                addLog(`Request: ${url}`);
+
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                addLog(`Respuesta: ${JSON.stringify(data)}`);
+
+                if (data.error) {
+                    showStatus(`❌ ${data.error}`, 'error');
+                    resultsDiv.innerHTML = `<p style="color: #e74c3c;">Error: ${data.error}</p>`;
+                } else {
+                    showStatus(`✅ Encontrado: ${data.titulo}`, 'success');
+                    displayResult(data);
+                    startRadio(data.radioUrl);
+                    refreshQueue();
+                }
+            } catch (error) {
+                showStatus(`❌ Error: ${error.message}`, 'error');
+                addLog(`Error: ${error.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔍 Buscar';
+            }
+        }
+
+        function displayResult(data) {
+            const duracionMin = Math.floor(data.duracion / 60);
+            const duracionSeg = (data.duracion % 60).toString().padStart(2, '0');
+            const esFondo = data.esFondo ? '📻 MÚSICA DE FONDO (LOFI)' : '🎵 CANCIÓN SOLICITADA';
+            
+            resultsDiv.innerHTML = `
+                <div class="song-card">
+                    <div class="song-info">
+                        <h3>${data.titulo}</h3>
+                        <p style="color: ${data.esFondo ? '#f1c40f' : '#e94560'}; font-weight: bold;">${esFondo}</p>
+                        <p>⏱️ Duración: ${duracionMin}:${duracionSeg} | 📍 Posición: ${data.posicion}</p>
+                        <p style="font-size: 12px; margin-top: 5px;">🔗 ${data.radioUrl}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function startStream() {
+            const radioUrl = `${serverUrl.value}/stream/${salaId.value}`;
+            addLog(`🎧 Conectando a radio: ${radioUrl}`);
+            startRadio(radioUrl);
+        }
+
+        function startRadio(radioUrl) {
+            audioPlayer.src = radioUrl;
+            playerSection.classList.remove('hidden');
+            addLog(`📡 Stream conectado. Esperando datos de audio...`);
+            
+            // El navegador bloquea autoplay - mostrar instrucciones
+            audioPlayer.play().catch(e => {
+                addLog(`⚠️ Autoplay bloqueado por el navegador`);
+                addLog(`👉 HAZ CLICK en el botón ▶️ del player para escuchar`);
+                showStatus('⏯️ Click en el ▶️ del reproductor para iniciar audio', 'loading');
+            });
+            
+            // Monitorear si llegan datos
+            audioPlayer.addEventListener('loadedmetadata', () => {
+                addLog(`✅ Metadatos recibidos - Audio listo`);
+                showStatus('🎵 Reproduciendo radio 24/7', 'success');
+            });
+            
+            audioPlayer.addEventListener('playing', () => {
+                addLog(`▶️ Reproducción iniciada`);
+            });
+            
+            audioPlayer.addEventListener('error', (e) => {
+                addLog(`❌ Error de audio: ${audioPlayer.error?.message || 'Desconocido'}`);
+                showStatus('Error al cargar audio. Intenta refrescar.', 'error');
+            });
+        }
+
+        async function refreshQueue() {
+            try {
+                const response = await fetch(`${serverUrl.value}/now?sala=${salaId.value}`);
+                const data = await response.json();
+                
+                let html = '';
+                
+                // Mostrar URL de radio
+                if (data.radioUrl) {
+                    html += `<div style="background: rgba(67, 97, 238, 0.2); padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 12px;">
+                        <strong>📻 URL del Stream:</strong> <a href="${data.radioUrl}" target="_blank" style="color: #4cc9f0;">${data.radioUrl}</a>
+                    </div>`;
+                }
+                
+                // Mostrar canción actual con nombre y URL
+                if (data.actual) {
+                    const esFondo = data.actual.esFondo ? '📻 MÚSICA DE FONDO' : '🎵 REPRODUCIENDO';
+                    const colorFondo = data.actual.esFondo ? '#f1c40f' : '#e94560';
+                    html += `<div style="background: rgba(233,69,96,0.2); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                        <div style="color: ${colorFondo}; font-weight: bold; margin-bottom: 8px;">${esFondo}</div>
+                        <div style="font-size: 16px; margin-bottom: 5px;"><strong>🎶 Nombre:</strong> ${data.actual.nombre || data.actual.titulo}</div>
+                        <div style="font-size: 12px; opacity: 0.8; margin-bottom: 5px;"><strong>🔗 URL:</strong> <a href="${data.actual.url}" target="_blank" style="color: #4cc9f0;">${data.actual.url}</a></div>
+                        <div style="font-size: 12px; opacity: 0.7;">⏱️ Duración: ${Math.floor(data.actual.duracion / 60)}:${(data.actual.duracion % 60).toString().padStart(2, '0')}</div>
+                    </div>`;
+                } else {
+                    html += `<div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                        ⏸️ Sin canción activa
+                    </div>`;
+                }
+                
+                // Mostrar cola con nombre y URL
+                if (data.cola && data.cola.length > 0) {
+                    html += '<h3 style="margin-bottom: 10px;">📋 En Cola:</h3>';
+                    data.cola.forEach((cancion, index) => {
+                        const nombre = cancion.nombre || cancion.titulo || cancion;
+                        const url = cancion.url || '#';
+                        html += `<div class="queue-item" style="flex-direction: column; align-items: flex-start;">
+                            <span style="font-weight: bold;">${index + 1}. ${nombre}</span>
+                            ${cancion.url ? `<a href="${url}" target="_blank" style="font-size: 11px; color: #4cc9f0; margin-top: 3px;">${url}</a>` : ''}
+                        </div>`;
+                    });
+                } else {
+                    html += '<p style="color: rgba(255,255,255,0.5);">📭 Cola vacía</p>';
+                }
+                
+                queueList.innerHTML = html;
+                addLog(`✅ Cola actualizada: ${data.totalCola} canciones en cola`);
+            } catch (error) {
+                addLog(`❌ Error al refrescar cola: ${error.message}`);
+            }
+        }
+
+        async function skipSong() {
+            try {
+                const response = await fetch(`${serverUrl.value}/skip?sala=${salaId.value}`);
+                const data = await response.json();
+                showStatus(data.mensaje || 'Canción saltada', 'success');
+                addLog(`Skip: ${data.mensaje}`);
+                refreshQueue();
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function stopRadio() {
+            try {
+                const response = await fetch(`${serverUrl.value}/stop?sala=${salaId.value}`);
+                const data = await response.json();
+                showStatus(data.mensaje || 'Radio detenido', 'success');
+                addLog(`Stop: ${data.mensaje}`);
+                audioPlayer.pause();
+                playerSection.classList.add('hidden');
+                refreshQueue();
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function clearQueue() {
+            try {
+                const response = await fetch(`${serverUrl.value}/clear?sala=${salaId.value}`);
+                const data = await response.json();
+                showStatus(data.mensaje || 'Cola limpiada', 'success');
+                addLog(`Clear: ${data.mensaje}`);
+                refreshQueue();
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-refresh queue every 10 seconds
+        setInterval(refreshQueue, 10000);
+        
+        // Initial health check
+        setTimeout(checkHealth, 1000);
+    </script>
+</body>
+</html>

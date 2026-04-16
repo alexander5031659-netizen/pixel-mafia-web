@@ -1,6 +1,10 @@
 const puppeteer = require("puppeteer-core");
 const path = require("path");
 require("dotenv").config();
+
+// Configurar URL del servidor de radio (externo o local)
+process.env.RADIO_URL = process.env.RADIO_SERVER_URL || process.env.RADIO_URL || 'http://localhost:5000';
+
 const { manejarComando, saludarUsuario } = require("./bot_respuesta");
 
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
@@ -41,11 +45,22 @@ if (!BOT_ROOM) {
     process.exit(1);
 }
 
+// Construir URL de radio para esta sala
+const RADIO_URL_SALA = `${process.env.RADIO_URL}/stream/${SALA_ID}`;
+
 console.log(`🎵 ${BOT_NAME} [${BOT_ID}] iniciando...`);
 console.log(`🔗 Sala URL: ${BOT_ROOM}`);
 console.log(`🏠 Sala ID: ${SALA_ID}`);
 console.log(`🖥️ Headless: ${HEADLESS}`);
 console.log(`🔧 Modo: ${NODE_ENV}`);
+console.log(`📻 Radio Server: ${process.env.RADIO_URL}`);
+console.log(`\n╔══════════════════════════════════════════════════════════╗`);
+console.log(`║  📻 URL DE RADIO PARA IMVU                               ║`);
+console.log(`║  ${RADIO_URL_SALA.padEnd(54)}  ║`);
+console.log(`║                                                          ║`);
+console.log(`║  💡 Copia esta URL y pégsala en:                         ║`);
+console.log(`║     Configuración de Sala → Room Music → Audio URL       ║`);
+console.log(`╚══════════════════════════════════════════════════════════╝\n`);
 
 async function hacerLogin(page) {
     try {
@@ -437,6 +452,8 @@ async function verificarYEntrarSala(page, roomUrl) {
             } catch (e) {}
         };
         await enviar(`🎵 ${BOT_NAME} activo y listo`);
+        await enviar(`📻 URL de radio: ${RADIO_URL_SALA}`);
+        await enviar(`💡 Cópiala en: Configuración de Sala → Room Music`);
         return true;
     } else {
         console.log('⚠️ No se detectó la sala. URL actual:', finalUrl);
@@ -451,6 +468,7 @@ async function verificarYEntrarSala(page, roomUrl) {
         executablePath: getChromePath(),
         userDataDir: SESSION_DIR,
         defaultViewport: null,
+        dumpio: false,  // No mostrar logs de Chrome/DevTools
         args: HEADLESS ? [
             "--no-sandbox",
             "--disable-setuid-sandbox",
@@ -583,8 +601,13 @@ async function verificarYEntrarSala(page, roomUrl) {
             // Verificar si es comando
             const texto = mensaje.trim();
             if (texto.startsWith('!')) {
-                console.log(`🎵 COMANDO: ${nombre}: ${texto}`);
+                console.log(`🎵 COMANDO DETECTADO: ${nombre}: ${texto}`);
                 if (window.onMsg) window.onMsg({ nombre, texto });
+            } else {
+                // Log para debugging (solo cada 10 mensajes para no saturar)
+                if (Math.random() < 0.1) {
+                    console.log(`💬 Chat: ${nombre}: ${texto.substring(0, 30)}...`);
+                }
             }
         }
         
@@ -595,20 +618,40 @@ async function verificarYEntrarSala(page, roomUrl) {
                     if (node.nodeType !== 1) return; // Solo elementos HTML
                     
                     // Estrategia 1: Buscar elementos con data-testid o atributos de mensaje
-                    const mensajeElements = node.querySelectorAll ? 
-                        node.querySelectorAll('[data-testid*="message"], .chat-message, .message-item, .imvu-message, [class*="message"], [class*="chat"]') : [];
+                    const selectores = [
+                        '[data-testid*="message"]',
+                        '[data-testid*="chat"]',
+                        '.chat-message',
+                        '.message-item',
+                        '.imvu-message',
+                        '[class*="message"]',
+                        '[class*="chat"]',
+                        '[class*="Message"]',
+                        '[class*="Chat"]',
+                        'div[role="listitem"]',
+                        '[class*="bubble"]',
+                        '[class*="Bubble"]'
+                    ];
                     
-                    mensajeElements.forEach((el) => {
-                        const texto = el.innerText || el.textContent || '';
-                        if (!texto.trim()) return;
-                        
-                        // Extraer nombre y mensaje
-                        const lineas = texto.split('\n').map(l => l.trim()).filter(l => l);
-                        if (lineas.length >= 2) {
-                            const nombre = lineas[0];
-                            const mensaje = lineas.slice(1).join(' ');
-                            procesarMensaje(nombre, mensaje);
-                        }
+                    selectores.forEach(selector => {
+                        try {
+                            const elementos = node.querySelectorAll ? node.querySelectorAll(selector) : [];
+                            elementos.forEach((el) => {
+                                const texto = el.innerText || el.textContent || '';
+                                if (!texto.trim()) return;
+                                
+                                // Extraer nombre y mensaje
+                                const lineas = texto.split('\n').map(l => l.trim()).filter(l => l);
+                                if (lineas.length >= 2) {
+                                    const nombre = lineas[0];
+                                    const mensaje = lineas.slice(1).join(' ');
+                                    if (mensaje.startsWith('!')) {
+                                        console.log(`📨 Observer detectó: ${nombre}: ${mensaje.substring(0, 50)}`);
+                                    }
+                                    procesarMensaje(nombre, mensaje);
+                                }
+                            });
+                        } catch(e) {}
                     });
                     
                     // Estrategia 2: Revisar el texto completo del nodo agregado
@@ -619,6 +662,7 @@ async function verificarYEntrarSala(page, roomUrl) {
                             const nombre = lineas[0];
                             const mensaje = lineas.slice(1).join(' ');
                             if (mensaje.startsWith('!')) {
+                                console.log(`📨 Texto nodo: ${nombre}: ${mensaje.substring(0, 50)}`);
                                 procesarMensaje(nombre, mensaje);
                             }
                         }
@@ -635,6 +679,7 @@ async function verificarYEntrarSala(page, roomUrl) {
         });
         
         console.log('✅ Sistema de detección de comandos iniciado');
+        console.log('📝 Escribe !play <canción> para probar');
     }, BOT_NAME.toLowerCase());
 
     console.log(`\n✅ ${BOT_NAME} listo y escuchando comandos`);
@@ -653,13 +698,22 @@ async function verificarYEntrarSala(page, roomUrl) {
                 const selectores = [
                     // Selectores específicos de IMVU Next Chat
                     '[data-testid="chat-message"]',
+                    '[data-testid*="message"]',
+                    '[data-testid*="chat"]',
                     '[class*="ChatMessage"]',
                     '[class*="chat-message"]',
                     '[class*="MessageBubble"]',
                     '[class*="message-bubble"]',
-                    // Fallbacks
+                    '[class*="bubble"]',
+                    '[class*="Bubble"]',
+                    'div[role="listitem"]',
+                    // Fallbacks más amplios
                     '[class*="Conversation"] [class*="message"]',
-                    'div[class*="chat"] div[class*="message"]'
+                    'div[class*="chat"] div[class*="message"]',
+                    '[class*="message-list"] > div',
+                    '[class*="chat-list"] > div',
+                    '[class*="messages"] > div',
+                    '[class*="content"] > div'
                 ];
                 
                 for (const selector of selectores) {
@@ -755,9 +809,10 @@ async function verificarYEntrarSala(page, roomUrl) {
         } catch (e) {
             // Silenciar errores de polling
         }
-    }, 1500); // Verificar cada 1.5 segundos (un poco más lento para evitar duplicados)
+    }, 1000); // Verificar cada 1 segundo
     
-    console.log('🔄 Sistema de polling activo iniciado (1.5s)');
+    console.log('🔄 Sistema de polling activo iniciado (1s)');
+    console.log('💡 Para probar: escribe !ping en el chat de IMVU');
     
     // Sistema de reconexión automática
     let reconectando = false;
