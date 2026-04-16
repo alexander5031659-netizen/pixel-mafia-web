@@ -3,14 +3,41 @@ require("dotenv").config();
 
 const RADIO_URL = process.env.RADIO_URL || "http://localhost:5000";
 
-// Variable para trackear si ya se envió la URL de radio
-let urlRadioEnviada = false;
+// Cache para evitar mensajes duplicados (global)
+const mensajesProcesados = new Set();
+const MENSAJES_MAX = 50;
+
+// Map de URLs de radio enviadas por sala
+const urlRadioEnviadaPorSala = new Map();
 
 async function manejarComando(msg, nombre, enviar, contexto = {}) {
     msg = msg.trim();
     if (!msg) return;
     const n = nombre || "tu";
     const salaId = contexto.salaId || 'sala1';
+    
+    // Generar ID único para este mensaje
+    const msgId = `${salaId}:${nombre}:${msg}:${Date.now()}`;
+    const msgShortId = `${salaId}:${nombre}:${msg}`;
+    
+    // Verificar si ya procesamos este mensaje recientemente
+    if (mensajesProcesados.has(msgShortId)) {
+        console.log(`⚠️ Mensaje duplicado ignorado: ${msgShortId}`);
+        return;
+    }
+    
+    // Marcar como procesado
+    mensajesProcesados.add(msgShortId);
+    
+    // Limpiar cache si es muy grande
+    if (mensajesProcesados.size > MENSAJES_MAX) {
+        const entries = Array.from(mensajesProcesados);
+        mensajesProcesados.clear();
+        entries.slice(-25).forEach(e => mensajesProcesados.add(e));
+    }
+    
+    // Obtener estado de URL para esta sala
+    let urlRadioEnviada = urlRadioEnviadaPorSala.get(salaId) || false;
 
     // ── Comando de ayuda ──
     if (msg === "!help" || msg === "!ayuda") {
@@ -40,10 +67,10 @@ async function manejarComando(msg, nombre, enviar, contexto = {}) {
                 // Primera canción - enviar info + URL de radio (UNA SOLA VEZ)
                 await enviar(`✅ ${cancion.titulo} [${duracion}]`);
                 
-                // Enviar URL de radio solo la primera vez
+                // Enviar URL de radio solo la primera vez por sala
                 if (!urlRadioEnviada) {
                     await enviar(`📻 URL de radio: ${radioUrl}\n📝 Cópiala en el panel de medios de IMVU`);
-                    urlRadioEnviada = true;
+                    urlRadioEnviadaPorSala.set(salaId, true);
                 }
             } else {
                 // Canciones siguientes - solo confirmar
